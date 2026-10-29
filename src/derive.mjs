@@ -26,6 +26,10 @@ export function deriveTokens(palette, options) {
   // Harden the hairlines on the ink-and-paper skin: no shadow can compensate
   // for a border that disappears into white.
   const lineScale = (signature === 'paper' ? 1.45 : 1) * (dark ? 1.2 : 1)
+  // The ink-and-paper skin has no hue to carry state, so its interaction tints
+  // work harder: the same alpha that reads as a wash on a coloured skin reads
+  // as nothing against #FAFAF8.
+  const tint = signature === 'paper' ? 1.6 : 1
 
   // Text roles: the two the shell uses for body copy are guaranteed, the rest
   // are progressively quieter but never fully invisible.
@@ -63,7 +67,7 @@ export function deriveTokens(palette, options) {
     '--dsw-alias-bg-layer-3': layer3,
     '--dsw-alias-bg-overlay': overlay,
     '--dsw-alias-bg-module-platform': layer2,
-    '--dsw-alias-bg-multi-select': alpha(accentText, 0.12),
+    '--dsw-alias-bg-multi-select': alpha(accentText, 0.12 * tint),
     '--dsw-alias-bg-skeleton': stroke(dark ? 0.1 : 0.07),
     '--dsw-alias-bg-document-preview': dark ? darken(bg, 0.03) : layer3,
     '--dsw-alias-bg-document-selection': alpha(accentText, 0.35),
@@ -103,7 +107,7 @@ export function deriveTokens(palette, options) {
     '--dsw-alias-link': accentText,
 
     '--dsw-alias-state-business-primary': accentText,
-    '--dsw-alias-state-business-tertiary': alpha(accentText, dark ? 0.18 : 0.11),
+    '--dsw-alias-state-business-tertiary': alpha(accentText, (dark ? 0.18 : 0.11) * tint),
     '--dsw-alias-state-error-primary': error,
     '--dsw-alias-state-error-secondary': mix(error, bg, 0.35),
     '--dsw-alias-state-success-primary': ok,
@@ -115,9 +119,9 @@ export function deriveTokens(palette, options) {
     '--dsw-alias-state-warn-tertiary': alpha(warning, dark ? 0.18 : 0.11),
     '--dsw-alias-state-idle-primary': mix(secondary, bg, 0.5),
 
-    '--dsw-alias-interactive-bg-hover': alpha(accentText, dark ? 0.12 : 0.065),
-    '--dsw-alias-interactive-bg-active': alpha(accentText, dark ? 0.19 : 0.11),
-    '--dsw-alias-interactive-bg-hover-accent': alpha(accentText, dark ? 0.24 : 0.15),
+    '--dsw-alias-interactive-bg-hover': alpha(accentText, (dark ? 0.12 : 0.065) * tint),
+    '--dsw-alias-interactive-bg-active': alpha(accentText, (dark ? 0.19 : 0.11) * tint),
+    '--dsw-alias-interactive-bg-hover-accent': alpha(accentText, (dark ? 0.24 : 0.15) * tint),
     '--dsw-alias-interactive-bg-hover-danger': alpha(error, dark ? 0.16 : 0.07),
     '--dsw-alias-interactive-bg-hover-solid': layer3,
 
@@ -132,7 +136,7 @@ export function deriveTokens(palette, options) {
     '--dsw-alias-button-info-hover': accentHover,
     '--dsw-alias-button-primary-fill': accentFill,
     '--dsw-alias-button-primary-hover': accentHover,
-    '--dsw-alias-button-primary-dimmed': alpha(accentFill, dark ? 0.24 : 0.14),
+    '--dsw-alias-button-primary-dimmed': alpha(accentFill, (dark ? 0.24 : 0.14) * tint),
     '--dsw-alias-button-tool-bar-fill': alpha(ink, dark ? 0.5 : 0.58),
     '--dsw-alias-button-tool-bar-fill-invisible': alpha(ink, dark ? 0.22 : 0.28),
     '--dsw-alias-button-tool-bar-hover': alpha(ink, dark ? 0.62 : 0.7),
@@ -182,13 +186,13 @@ export function deriveTokens(palette, options) {
     '--dsw-specific-menu': alpha(layer2, 0.97),
     '--dsw-specific-selector': layer3,
     '--dsw-specific-sidebar-fill': subtle(0.025),
-    '--dsw-specific-sidebar-nav-item-active': alpha(accentText, dark ? 0.16 : 0.1),
-    '--dsw-specific-sidebar-nav-item-hover': alpha(accentText, dark ? 0.1 : 0.06),
+    '--dsw-specific-sidebar-nav-item-active': alpha(accentText, (dark ? 0.16 : 0.1) * tint),
+    '--dsw-specific-sidebar-nav-item-hover': alpha(accentText, (dark ? 0.1 : 0.06) * tint),
     '--dsw-specific-sidebar-nav-item-active-accent': accentText,
     '--dsw-specific-input-major': layer2,
     '--dsw-specific-login-input': layer3,
     '--dsw-specific-bubble': mix(layer2, accentText, 0.04),
-    '--dsw-specific-bubble-highlight': alpha(accentText, dark ? 0.14 : 0.1),
+    '--dsw-specific-bubble-highlight': alpha(accentText, (dark ? 0.14 : 0.1) * tint),
     '--dsw-specific-tip': layer3,
   }
 
