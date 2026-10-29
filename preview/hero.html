@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Atlas · 六种材质，一套皮肤</title>
+  <link rel="stylesheet" href="./atlas.css" />
+  <style>
+    /* The contact sheet is its own composition: fixed colours, so the six
+       cards cannot borrow each other's palette through the page tokens. */
+    body.hero {
+      grid-template-columns: none; display: block; overflow: hidden;
+      background: #0B0F0D; color: #E9F0EB;
+    }
+    .hero-inner { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding: 92px 120px 64px; gap: 52px; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 14px;
+      font: 500 12px/1 var(--mono); letter-spacing: 0.18em; text-transform: uppercase;
+      color: #8FA79A;
+    }
+    .hero-eyebrow .rule { height: 1px; width: 72px; background: #2C3A33; }
+    .hero-copy { display: grid; grid-template-columns: auto 1fr auto; align-items: end; gap: 64px; margin-top: 30px; }
+    .hero-copy h1 { margin: 0; font: 600 112px/0.92 var(--font); letter-spacing: -0.048em; }
+    .hero-copy h1 em { font-style: normal; color: #74C3A2; }
+    .hero-copy p { margin: 0 0 12px; max-width: 560px; font-size: 15px; line-height: 1.75; color: #A9BCB2; }
+    .hero-stats { display: flex; gap: 34px; padding-bottom: 8px; }
+    .hero-stats div { display: flex; flex-direction: column; gap: 4px; }
+    .hero-stats b { font: 500 40px/1 var(--font); letter-spacing: -0.03em; color: #E9F0EB; }
+    .hero-stats span { font: 400 10.5px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: #6E8177; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-content: start; }
+    .hero-foot {
+      display: flex; align-items: center; gap: 16px;
+      font: 400 11.5px/1 var(--mono); color: #6E8177;
+      border-top: 1px solid #1C2621; padding-top: 20px;
+    }
+    .hero-foot b { color: #A9BCB2; font-weight: 500; }
+  </style>
+</head>
+<body class="hero">
+  <div class="hero-inner">
+    <header>
+      <div class="hero-eyebrow"><span>dsh-theme-atlas</span><span class="rule"></span><span>theme pack · v0.1.0</span></div>
+      <div class="hero-copy">
+        <h1>六种材质<br />一套<em>皮肤</em></h1>
+        <p>墨玉、赤陶、极光、深海、樱雾、素笺。每套只声明六个输入色，其余 <b>119 个 --dsw-* token</b> 由同一套规则推导，深浅两版同时生成。</p>
+        <div class="hero-stats">
+          <div><b>6</b><span>skins</span></div>
+          <div><b>12</b><span>palettes</span></div>
+          <div><b>119</b><span>tokens</span></div>
+        </div>
+      </div>
+    </header>
+    <div class="cards" id="cards"></div>
+    <footer class="hero-foot">
+      <b>Atlas</b><span>·</span><span>6 skins · 2 appearances</span><span>·</span>
+      <span>皮肤预览 1600×1000 · 海报 2400×1350</span><span style="margin-left:auto">MIT</span>
+    </footer>
+  </div>
+  <script src="./data.js"></script>
+  <script src="./hero.js"></script>
+</body>
+</html>

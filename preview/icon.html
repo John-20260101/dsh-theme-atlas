@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Atlas icon</title>
+  <style>
+    html, body { margin: 0; width: 1024px; height: 1024px; background: transparent; overflow: hidden; }
+    body { display: grid; place-items: center; }
+    svg { display: block; }
+  </style>
+</head>
+<body>
+  <svg id="mark" width="1024" height="1024" viewBox="0 0 1024 1024" aria-label="Atlas">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#141C18" />
+        <stop offset="0.55" stop-color="#0B0F0D" />
+        <stop offset="1" stop-color="#070A09" />
+      </linearGradient>
+      <radialGradient id="glow" cx="0.3" cy="0.18" r="0.9">
+        <stop offset="0" stop-color="#74C3A2" stop-opacity="0.22" />
+        <stop offset="1" stop-color="#74C3A2" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+    <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#bg)" />
+    <rect x="0" y="0" width="1024" height="1024" rx="224" fill="url(#glow)" />
+    <g id="facets" transform="translate(512 512)"></g>
+    <g transform="translate(512 512)">
+      <circle r="112" fill="#0B0F0D" />
+      <circle r="112" fill="none" stroke="#E9F0EB" stroke-opacity="0.3" stroke-width="4" />
+      <circle r="20" fill="#74C3A2" />
+    </g>
+    <rect x="1.5" y="1.5" width="1021" height="1021" rx="223" fill="none" stroke="#E9F0EB" stroke-opacity="0.1" stroke-width="3" />
+  </svg>
+  <script>
+    /* Six facets, one per skin. Colours are the pack's dark accents. */
+    const COLORS = ['#74C3A2', '#E08C5F', '#55D6D2', '#5B8DEF', '#E78BA8', '#E8E8E8']
+    const group = document.querySelector('#facets')
+    const ns = 'http://www.w3.org/2000/svg'
+    COLORS.forEach((color, index) => {
+      const petal = document.createElementNS(ns, 'path')
+      petal.setAttribute('d', 'M0 -410 L150 -186 L0 -96 L-150 -186 Z')
+      petal.setAttribute('fill', color)
+      petal.setAttribute('fill-opacity', '0.92')
+      petal.setAttribute('stroke', '#070A09')
+      petal.setAttribute('stroke-opacity', '0.9')
+      petal.setAttribute('stroke-width', '7')
+      petal.setAttribute('transform', `rotate(${(index * 360) / COLORS.length})`)
+      group.append(petal)
+    })
+    window.__PREVIEW_READY__ = true
+  </script>
+</body>
+</html>

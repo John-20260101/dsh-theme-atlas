@@ -1,0 +1,74 @@
+{
+  "name": "dsh-theme-atlas",
+  "version": "0.1.0",
+  "description": "Atlas: six material skins (Ink Jade, Terracotta, Aurora, Abyss, Sakura, Paper) for the DeepSeek Harness Web GUI — one token engine, light and dark, switched from an in-app rail.",
+  "type": "module",
+  "license": "MIT",
+  "author": "John-20260101",
+  "homepage": "https://github.com/John-20260101/dsh-theme-atlas#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/John-20260101/dsh-theme-atlas.git"
+  },
+  "bugs": {
+    "url": "https://github.com/John-20260101/dsh-theme-atlas/issues"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "theme",
+    "skin",
+    "tokens"
+  ],
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "cordis.patch.yml",
+    "src",
+    "docs",
+    "assets",
+    "screenshots.json",
+    "README.md",
+    "README.zh.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true
+    },
+    "engines": {
+      "dsh": ">=0.2.0-rc.1 <0.3.0-0"
+    },
+    "compatibility": {
+      "dsh": ">=0.2.0-rc.1 <0.3.0-0",
+      "platform": [
+        "web"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/build.mjs && node scripts/verify.mjs",
+    "shots": "node scripts/shots.mjs",
+    "test": "node scripts/verify.mjs && node tests/assets.mjs && node tests/client.mjs",
+    "test:client": "node tests/client.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.55.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>Atlas key art</title>
+  <style>
+    :root { --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      --mono: ui-monospace, "SF Mono", Menlo, monospace; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1536px; height: 1024px; overflow: hidden; }
+    body {
+      position: relative; color: var(--ink); background: var(--bg);
+      font-family: var(--font); -webkit-font-smoothing: antialiased;
+    }
+    .wash { position: absolute; inset: 0; }
+    .grain {
+      position: absolute; inset: 0; opacity: .22; mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    }
+    .frame { position: absolute; inset: 56px; border: 1px solid var(--line); }
+    .top { position: absolute; left: 96px; right: 96px; top: 92px; display: flex; align-items: center; gap: 18px;
+      font: 500 12px/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+    .top .rule { flex: 1; height: 1px; background: var(--line); }
+    .body { position: absolute; left: 96px; top: 236px; right: 96px; display: grid; grid-template-columns: minmax(0, 1fr) 500px; gap: 20px; align-items: center; }
+    .zh { font-size: 212px; line-height: .86; letter-spacing: -.05em; font-weight: 600; margin: 0; color: var(--ink); }
+    .en { margin: 26px 0 0; font: 500 26px/1 var(--font); letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+    .material { margin: 22px 0 0; font-size: 18px; line-height: 1.65; color: var(--muted); max-width: 540px; }
+    .gem { position: relative; width: 500px; height: 500px; }
+    .gem svg { width: 100%; height: 100%; overflow: visible; }
+    .bottom { position: absolute; left: 96px; right: 96px; bottom: 84px; display: grid; grid-template-columns: auto auto 1fr; align-items: end; gap: 54px; padding-top: 26px; border-top: 1px solid var(--line); }
+    .swatches { display: flex; gap: 10px; }
+    .sw { width: 104px; }
+    .sw i { display: block; height: 58px; border-radius: 10px; border: 1px solid var(--line); }
+    .sw span { display: block; margin-top: 9px; font: 400 11px/1 var(--mono); letter-spacing: .02em; color: var(--muted); }
+    .meta { justify-self: end; text-align: right; font: 400 12px/1.95 var(--mono); color: var(--muted); }
+    .meta b { color: var(--ink); font-weight: 500; }
+    .meta .row { display: flex; gap: 18px; justify-content: flex-end; }
+    .ledger { display: flex; gap: 30px; }
+    .ledger div { display: flex; flex-direction: column; gap: 5px; }
+    .recipe {
+      position: absolute; left: 96px; right: 96px; bottom: 288px;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px;
+      border-top: 1px solid var(--line); padding-top: 18px;
+    }
+    .recipe .cell { display: flex; flex-direction: column; gap: 8px; }
+    .recipe .k { font: 400 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .recipe .v { font: 500 15px/1 var(--mono); letter-spacing: .01em; color: var(--ink); }
+    .recipe .bar { height: 4px; border-radius: 2px; }
+    .ledger b { font: 500 30px/1 var(--font); letter-spacing: -.02em; color: var(--ink); }
+    .ledger span { font: 400 10px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--caption); }
+    
+  </style>
+</head>
+<body>
+  <div class="wash" id="wash"></div>
+  <div class="grain"></div>
+  <div class="frame"></div>
+  <div class="top"><span>Atlas</span><span class="rule"></span><span id="index">01 / 06</span><span>material study</span></div>
+  <div class="body">
+    <div>
+      <h1 class="zh" id="zh">墨玉</h1>
+      <p class="en" id="en">Ink Jade</p>
+      <p class="material" id="material"></p>
+    </div>
+    <div class="gem" id="gem"></div>
+  </div>
+  <div class="recipe" id="recipe"></div>
+  <div class="bottom">
+    <div class="swatches" id="swatches"></div>
+    <div class="ledger" id="ledger"></div>
+    <div class="meta">
+      <div class="row"><span>tokens <b>119</b></span><span>modes <b>light · dark</b></span></div>
+      <div class="row"><span id="contrast"></span></div>
+    </div>
+  </div>
+  <script src="./data.js"></script>
+  <script src="./keyart.js"></script>
+</body>
+</html>
