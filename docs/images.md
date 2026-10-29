@@ -1,8 +1,8 @@
 # Image sizes / 图片尺寸规范
 
-Every image in this repository is generated, not hand-exported: `pnpm shots` renders the static preview pages at the sizes below and writes them into `assets/`. That is why the table is a contract — a size changed in `scripts/shots.mjs` without changing this document is a bug.
+Every image in this repository is generated, not hand-exported: `npm run shots` renders the static preview pages at the sizes below and writes them into `assets/`. That is why the table is a contract — a size changed in `scripts/shots.mjs` without changing this document is a bug.
 
-仓库里所有图片都是生成的：`pnpm shots` 按下列尺寸渲染静态预览页并写入 `assets/`。所以这张表就是契约——改了 `scripts/shots.mjs` 却没改这里，就是 bug。
+仓库里所有图片都是生成的：`npm run shots` 按下列尺寸渲染静态预览页并写入 `assets/`。所以这张表就是契约——改了 `scripts/shots.mjs` 却没改这里，就是 bug。
 
 ---
 
@@ -44,8 +44,8 @@ The 180 px icon exists for list rows and README badges; it is a downscale of the
 ## 4. Regenerating
 
 ```sh
-pnpm build      # palettes first: images are painted from derived tokens
-pnpm shots      # renders UI shots (dsf 2, saved at CSS size), key art, icon
+npm run build      # palettes first: images are painted from derived tokens
+npm run shots      # renders UI shots (dsf 2, saved at CSS size), key art, icon
 ```
 
 - UI screenshots are captured with `deviceScaleFactor: 2` and saved with `scale: 'css'`, so the file is exactly 1600×1000 while the type was laid out with 2× rasterisation.
@@ -60,7 +60,7 @@ sips -z 180 180 assets/icon-1024.png --out assets/icon-180.png
 
 ## 5. Checklist before shipping an image change
 
-1. `pnpm verify` passes (the images must match a valid palette).
+1. `npm run verify` passes (the images must match a valid palette).
 2. The file name still carries its pixel size — a mismatch between name and file is a documentation bug.
 3. `screenshots.json` still lists exactly the UI shots, in reading order, and no key art.
 4. The README and this table agree with the file listing:

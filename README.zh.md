@@ -67,14 +67,14 @@ Desktop：**插件 → 添加插件**，填入 `github:John-20260101/dsh-theme-a
 ## 开发
 
 ```sh
-pnpm install
-pnpm verify   # 构建 + token 完整性 + WCAG 门槛
-pnpm shots    # 按文档尺寸重渲染全部图片
+npm install
+npm run verify   # 构建 + token 完整性 + WCAG 门槛
+npm run shots    # 按文档尺寸重渲染全部图片
 ```
 
-源码：`src/color.mjs`（色彩运算）、`src/tokens.mjs`（119 个 token 名契约）、`src/skins.mjs`（每种外观六个输入色）、`src/derive.mjs`（角色推导）、`src/runtime.mjs`（token 层与滑轨）。`client.js` 是生成物——改 `src/` 后跑 `pnpm build`。
+源码：`src/color.mjs`（色彩运算）、`src/tokens.mjs`（119 个 token 名契约）、`src/skins.mjs`（每种外观六个输入色）、`src/derive.mjs`（角色推导）、`src/runtime.mjs`（token 层与滑轨）。`client.js` 是生成物——改 `src/` 后跑 `npm run build`。
 
-新增一套皮肤只需在 `src/skins.mjs` 加一行；`pnpm verify` 会告诉你新色板是否过关。
+新增一套皮肤只需在 `src/skins.mjs` 加一行；`npm run verify` 会告诉你新色板是否过关。
 
 ## 许可
 

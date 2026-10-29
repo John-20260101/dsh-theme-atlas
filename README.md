@@ -67,14 +67,14 @@ Sizes, display guidance and regeneration commands are specified in [docs/images.
 ## Develop
 
 ```sh
-pnpm install
-pnpm verify   # build + token completeness + WCAG gates
-pnpm shots    # re-render every image at the documented size
+npm install
+npm run verify   # build + token completeness + WCAG gates
+npm run shots    # re-render every image at the documented size
 ```
 
-Source layout: `src/color.mjs` (colour maths), `src/tokens.mjs` (the 119-name contract), `src/skins.mjs` (six inputs per appearance), `src/derive.mjs` (role derivation), `src/runtime.mjs` (tokens + rail). `client.js` is generated — edit `src/` and run `pnpm build`.
+Source layout: `src/color.mjs` (colour maths), `src/tokens.mjs` (the 119-name contract), `src/skins.mjs` (six inputs per appearance), `src/derive.mjs` (role derivation), `src/runtime.mjs` (tokens + rail). `client.js` is generated — edit `src/` and run `npm run build`.
 
-Adding a skin is one row in `src/skins.mjs`; run `pnpm verify` and the contrast gate tells you whether the two new palettes hold up.
+Adding a skin is one row in `src/skins.mjs`; run `npm run verify` and the contrast gate tells you whether the two new palettes hold up.
 
 ## License
 

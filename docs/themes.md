@@ -15,7 +15,7 @@ Atlas is built the other way round. A skin is **six colour inputs per appearance
 
 1. **Completeness is checkable.** The 119 `--dsw-*` alias tokens are a checked contract (`src/tokens.mjs`); the build fails if a derivation misses one or invents one.
 2. **Semantics survive the skin.** `state-error-*` is always the error hue, `bg-mask-*` always darkens, `label-caption` is always quieter than `label-secondary`. Switching skins changes the climate, not the grammar.
-3. **Contrast is measured, not judged by eye.** `pnpm verify` recomputes WCAG ratios for every skin and appearance and fails below the advertised floors.
+3. **Contrast is measured, not judged by eye.** `npm run verify` recomputes WCAG ratios for every skin and appearance and fails below the advertised floors.
 
 The visible result: a theme can be described in one sentence (“jade grey on warm paper”), and that sentence still holds on the settings page, in a diff, in a toast and in the composer.
 
@@ -161,8 +161,8 @@ Best for: comparative reading, screenshots, printing. Contrast 17.9:1 / 16.9:1.
 Then:
 
 ```sh
-pnpm verify   # token completeness + contrast gate
-pnpm shots    # re-render the preview and key art at the documented sizes
+npm run verify   # token completeness + contrast gate
+npm run shots    # re-render the preview and key art at the documented sizes
 ```
 
 The gate reports the measured ratios; if a floor fails it names the skin and the role, so the fix is a colour change rather than a guessing game.
