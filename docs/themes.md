@@ -99,7 +99,7 @@ Because the scrim composites to very nearly the palette's own page colour, the c
 ### 墨玉 · Ink Jade
 *和田青玉 · 宣纸 / Hetian jade on rice paper*
 
-![Ink Jade key art](../assets/keyart/ink-jade-1536x1024.png)
+![Ink Jade key art](../assets/keyart/ink-jade-1536x1024.jpg)
 
 Jade grey pressed into warm paper. The page keeps the warmth of 宣纸 (±2° hue around neutral) while the pigment is a desaturated jade; the result reads cool without turning the whole window cold. The signature wash puts a faint jade pool at the top-left and a colder one at the bottom-right, so the sidebar and the conversation sit in different light.
 
@@ -108,7 +108,7 @@ Best for: daylight work, long code reading. Contrast 15.6:1 / 16.0:1.
 ### 赤陶 · Terracotta
 *未上釉的陶土 · 砂 / Unglazed clay and sand*
 
-![Terracotta key art](../assets/keyart/terracotta-1536x1024.png)
+![Terracotta key art](../assets/keyart/terracotta-1536x1024.jpg)
 
 Kiln-fired ochre over sandy paper. The accent is deliberately brick rather than orange — it survives being used as a 1px active-nav bar without glowing. Plate is warmer than the page, which makes cards feel like paper laid on paper rather than floating glass.
 
@@ -117,7 +117,7 @@ Best for: writing-heavy sessions, afternoon light. Contrast 14.9:1 / 15.0:1.
 ### 极光 · Aurora
 *极地冰晶 · 夜光 / Polar ice and night glow*
 
-![Aurora key art](../assets/keyart/aurora-1536x1024.png)
+![Aurora key art](../assets/keyart/aurora-1536x1024.jpg)
 
 The only skin with two strong hues: teal pigment and a violet atmosphere. In dark mode the violet lives almost entirely in the wash, so semantic colour stays teal and the interface never turns “purple theme”. The light appearance is the pack's coolest page (blue-grey paper) without becoming a blue theme.
 
@@ -126,7 +126,7 @@ Best for: dark rooms, demos, anything that should feel alive. Contrast 15.5:1 / 
 ### 深海 · Abyss
 *深海蓝 · 微光 / Deep water and faint light*
 
-![Abyss key art](../assets/keyart/abyss-1536x1024.png)
+![Abyss key art](../assets/keyart/abyss-1536x1024.jpg)
 
 Blue pushed almost to black, with only the states still lit. The accent is brighter in dark than in light (a rare inversion, and the reason `accent` is hardened per appearance rather than once). Status colours are the only saturated things on screen, which makes a running tool call easy to spot from across the room.
 
@@ -135,7 +135,7 @@ Best for: night work, low-light rooms. Contrast 15.9:1 / 16.1:1.
 ### 樱雾 · Sakura Mist
 *薄樱 · 雾面 / Thin blossom on mist*
 
-![Sakura Mist key art](../assets/keyart/sakura-1536x1024.png)
+![Sakura Mist key art](../assets/keyart/sakura-1536x1024.jpg)
 
 Pink kept at mist strength. The trap with rose themes is sweetness; here the pigment is closer to a wine stain than to candy, the page is a warm off-white, and the second hue is a dust rose used only in the wash. Light mode is the intended appearance, dark is a night translation rather than an inversion.
 
@@ -144,7 +144,7 @@ Best for: light mode, editorial reading. Contrast 15.1:1 / 15.8:1.
 ### 素笺 · Paper
 *无涂布纸 · 墨 / Uncoated paper and ink*
 
-![Paper key art](../assets/keyart/paper-1536x1024.png)
+![Paper key art](../assets/keyart/paper-1536x1024.jpg)
 
 Ink and paper only — no chromatic accent at all. Because there is no hue to carry hierarchy, the skin leans on grammar: hairlines are 45% firmer, shadows shallower, radii unchanged. The primary button is black (light) or white (dark), which is the most honest possible “accent” for this idea.
 
@@ -161,29 +161,29 @@ The photographs are used at native resolution (1448×1086 and 1536×1024) and co
 ### 三江夜 · River Night
 *岷江 · 青衣江 · 大渡河 / Three rivers at blue hour*
 
-![River Night key art](../assets/keyart/sanjiang-1536x1024.png)
+![River Night key art](../assets/keyart/sanjiang-1536x1024.jpg)
 
 Warm lantern light smeared across a cold river. The accent is the lantern's terracotta, the second hue is the hill green; everything else is blue-hour navy. This is the warmest of the three and the one that reads best as a full-bleed image.
 
-Contrast 15.4:1 / 15.9:1. Preview: [light](../assets/screenshots/09-sanjiang-light-1600x1000.png) · [dark](../assets/screenshots/12-sanjiang-dark-1600x1000.png).
+Contrast 15.4:1 / 15.9:1. Preview: [light](../assets/screenshots/09-sanjiang-light-1600x1000.jpg) · [dark](../assets/screenshots/12-sanjiang-dark-1600x1000.jpg).
 
 ### 凌云晚照 · Lingyun Dusk
 *崖壁 · 晚钟 / Cliff face at the evening bell*
 
-![Lingyun Dusk key art](../assets/keyart/lingyun-1536x1024.png)
+![Lingyun Dusk key art](../assets/keyart/lingyun-1536x1024.jpg)
 
 Sandstone holding the last of the daylight: gold-brown accent on navy, the only warm-led dark skin in the pack. In light mode the page turns to a warm paper so the photograph does not fight it.
 
-Contrast 15.4:1 / 16.5:1. Preview: [light](../assets/screenshots/10-lingyun-light-1600x1000.png).
+Contrast 15.4:1 / 16.5:1. Preview: [light](../assets/screenshots/10-lingyun-light-1600x1000.jpg).
 
 ### 峨眉夜雾 · Emei Mist
 *冷雾 · 月色 / Cold mist and moonlight*
 
-![Emei Mist key art](../assets/keyart/emei-1536x1024.png)
+![Emei Mist key art](../assets/keyart/emei-1536x1024.jpg)
 
 Blue all night: the mist erases the ridge, the palette keeps a very low temperature and a thin moonlit accent. The coolest of the three, and the one closest to the pack's 深海 skin in temperature but far softer in contrast.
 
-Contrast 16.1:1 / 15.7:1. Preview: [light](../assets/screenshots/11-emei-light-1600x1000.png).
+Contrast 16.1:1 / 15.7:1. Preview: [light](../assets/screenshots/11-emei-light-1600x1000.jpg).
 
 ## 6. Appearance behaviour
 

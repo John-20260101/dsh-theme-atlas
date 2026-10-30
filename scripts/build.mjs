@@ -119,7 +119,7 @@ for (const skin of SKINS) {
   for (const row of rows) {
     md.push(`| ${row.mode} | ${row.body.toFixed(2)}:1 | ${row.secondary.toFixed(2)}:1 | ${row.accentText.toFixed(2)}:1 | ${row.buttonLabel.toFixed(2)}:1 | ${row.border.toFixed(2)}:1 |`)
   }
-  md.push(`\nKey art: [\`assets/keyart/${skin.id}-1536x1024.png\`](../assets/keyart/${skin.id}-1536x1024.png)\n`)
+  md.push(`\nKey art: [\`assets/keyart/${skin.id}-1536x1024.jpg\`](../assets/keyart/${skin.id}-1536x1024.jpg)\n`)
 }
 await writeFile(join(ROOT, 'docs/palettes.md'), `${md.join('\n')}\n`, 'utf8')
 

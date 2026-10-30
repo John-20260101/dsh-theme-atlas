@@ -13,14 +13,14 @@ Every image in this repository is generated, not hand-exported: `npm run shots` 
 | 1 | `assets/icon-1024.png` | 1024×1024 | 1:1 | PNG | master icon, source for the smaller cuts | this doc |
 | 2 | `assets/icon-512.png` | 512×512 | 1:1 | PNG | storefront / plugin-manager tile | this doc |
 | 3 | `assets/icon-180.png` | 180×180 | 1:1 | PNG | small tile, list rows | this doc |
-| 4 | `assets/screenshots/00-hero-2400x1350.png` | 2400×1350 | 16:9 | PNG | material contact sheet | README |
-| 5 | `assets/screenshots/00b-leshan-2400x1350.png` | 2400×1350 | 16:9 | PNG | Leshan triptych banner, README social preview | README, `screenshots.json` |
-| 6 | `assets/screenshots/01…06-*-1600x1000.png` | 1600×1000 | 16:10 | PNG | one storefront screenshot per material skin (light) | `screenshots.json` (subset) |
-| 7 | `assets/screenshots/07-aurora-dark-1600x1000.png` | 1600×1000 | 16:10 | PNG | dark-mode showcase | `screenshots.json` |
-| 8 | `assets/screenshots/08-paper-dark-1600x1000.png` | 1600×1000 | 16:10 | PNG | high-contrast showcase | README |
-| 9 | `assets/screenshots/09…11-*-1600x1000.png` | 1600×1000 | 16:10 | PNG | Leshan skins, light appearance (photo + frosted plates) | `screenshots.json` |
-| 10 | `assets/screenshots/12-sanjiang-dark-1600x1000.png` | 1600×1000 | 16:10 | PNG | Leshan dark showcase | `screenshots.json` |
-| 11 | `assets/keyart/<skin>-1536x1024.png` | 1536×1024 | 3:2 | PNG | key art per skin (material posters, photo-led for Leshan) | `docs/themes.md` |
+| 4 | `assets/screenshots/00-hero-2400x1350.jpg` | 2400×1350 | 16:9 | PNG | material contact sheet | README |
+| 5 | `assets/screenshots/00b-leshan-2400x1350.jpg` | 2400×1350 | 16:9 | PNG | Leshan triptych banner, README social preview | README, `screenshots.json` |
+| 6 | `assets/screenshots/01…06-*-1600x1000.jpg` | 1600×1000 | 16:10 | JPEG | one storefront screenshot per material skin (light) | `screenshots.json` (subset) |
+| 7 | `assets/screenshots/07-aurora-dark-1600x1000.jpg` | 1600×1000 | 16:10 | PNG | dark-mode showcase | `screenshots.json` |
+| 8 | `assets/screenshots/08-paper-dark-1600x1000.jpg` | 1600×1000 | 16:10 | PNG | high-contrast showcase | README |
+| 9 | `assets/screenshots/09…11-*-1600x1000.jpg` | 1600×1000 | 16:10 | JPEG | Leshan skins, light appearance (photo + frosted plates) | `screenshots.json` |
+| 10 | `assets/screenshots/12-sanjiang-dark-1600x1000.jpg` | 1600×1000 | 16:10 | PNG | Leshan dark showcase | `screenshots.json` |
+| 11 | `assets/keyart/<skin>-1536x1024.jpg` | 1536×1024 | 3:2 | JPEG | key art per skin (material posters, photo-led for Leshan) | `docs/themes.md` |
 | 12 | `assets/wallpapers/leshan-<id>-<w>x<h>.jpg` | native 1448×1086 / 1536×1024 | 4:3-ish | JPEG | the photographs the three Leshan skins use, served at native size and cover-cropped by the shell | runtime, docs |
 
 `screenshots.json` lists eight images — the storefront maximum — chosen as: the Leshan banner, the three Leshan light shots, one Leshan dark shot, and three material shots (Ink Jade, Paper, Aurora dark). The remaining sixteen renders are documentation and stay out of the storefront list.
@@ -31,7 +31,8 @@ Every image in this repository is generated, not hand-exported: `npm run shots` 
 - **1600×1000, not 1920×1080.** DSH is a three-column desktop shell; 16:10 at 1600 wide is the smallest canvas where the sidebar, transcript and right panel all read without shrinking type below 11 px. It also halves cleanly to 800×500 in a detail modal.
 - **2400×1350 for the banner.** 16:9 so it can be reused as a GitHub social preview without letterboxing; 2400 wide because the contact sheet carries six cards and the type has to survive being shown at ~900 px in a README.
 - **1536×1024 for key art.** 3:2 prints and crops well, and matches the size the poster layout was composed for; downscaling to 1152×768 still keeps the microtype legible.
-- **PNG for renders, JPEG for photographs.** The UI shots are flat colour and type — PNG is smaller than WebP here and avoids chroma artefacts on hairlines. The three wallpapers are photographs: JPEG at quality 88 keeps them ~550–700 kB each and avoids shipping 2.8 MB PNGs that the browser would only scale down.
+- **JPEG for renders, PNG for icons.** Renders are shipped as JPEG: quality 86 with 4:4:4 chroma for the UI shots (text stays crisp, hairlines do not smear), quality 84 4:2:0 for key art. The whole render set fell from ~18 MB of PNG to ~2.4 MB without a visible difference at 100%. Icons stay PNG — flat geometry, and they need the alpha.
+- **Wallpapers at quality 78.** 1.4 MB of JPEG for the three photographs; they are viewed under a scrim, so the last few percent of quality is invisible while the bytes are not.
 - **Wallpapers are not re-rendered.** They are the author's files, kept at native resolution; the filename carries their real pixel size so the asset test can verify them like any other image.
 
 ## 3. Display guidance

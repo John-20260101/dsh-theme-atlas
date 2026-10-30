@@ -63,9 +63,10 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "verify": "node scripts/build.mjs && node scripts/verify.mjs",
-    "shots": "node scripts/shots.mjs",
+    "shots": "node scripts/shots.mjs && python3 scripts/compress.py",
     "test": "node scripts/verify.mjs && node tests/assets.mjs && node tests/host.mjs && node tests/client.mjs",
-    "test:client": "node tests/client.mjs"
+    "test:client": "node tests/client.mjs",
+    "compress": "python3 scripts/compress.py"
   },
   "devDependencies": {
     "playwright": "1.55.0"

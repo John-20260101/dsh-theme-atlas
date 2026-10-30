@@ -21,20 +21,36 @@ async function walk(dir) {
   return found
 }
 
-const pngSize = async (path) => {
+const imageSize = async (path) => {
   const buffer = await readFile(path)
-  if (buffer.toString('ascii', 1, 4) !== 'PNG') return null
-  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) }
+  if (buffer.toString('ascii', 1, 4) === 'PNG') {
+    return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) }
+  }
+  if (buffer[0] === 0xff && buffer[1] === 0xd8) {
+    // JPEG: walk the marker segments to the first SOFn frame header.
+    let offset = 2
+    while (offset + 9 < buffer.length) {
+      if (buffer[offset] !== 0xff) { offset += 1; continue }
+      const marker = buffer[offset + 1]
+      const length = buffer.readUInt16BE(offset + 2)
+      if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc) {
+        return { height: buffer.readUInt16BE(offset + 5), width: buffer.readUInt16BE(offset + 7) }
+      }
+      offset += 2 + length
+    }
+  }
+  return null
 }
 
-for (const path of (await walk(join(ROOT, 'assets'))).filter((file) => file.endsWith('.png'))) {
+const IMAGE = /\.(png|jpe?g)$/i
+for (const path of (await walk(join(ROOT, 'assets'))).filter((file) => IMAGE.test(file))) {
   const file = relative(ROOT, path)
-  const size = await pngSize(path)
+  const size = await imageSize(path)
   if (size === null) {
-    problems.push(`${file}: not a PNG`)
+    problems.push(`${file}: not a readable image`)
     continue
   }
-  const match = basename(file).match(/-(\d+)x(\d+)\.png$/)
+  const match = basename(file).match(/-(\d+)x(\d+)\.(?:png|jpe?g)$/i)
   if (match !== null) {
     const [width, height] = [Number(match[1]), Number(match[2])]
     if (size.width !== width || size.height !== height) {

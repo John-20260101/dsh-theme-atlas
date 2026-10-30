@@ -4,7 +4,7 @@
 
 [中文说明](./README.zh.md) · [Theme document](./docs/themes.md) · [Palette reference](./docs/palettes.md) · [Image sizes](./docs/images.md)
 
-![Atlas × Leshan — three photo skins](./assets/screenshots/00b-leshan-2400x1350.png)
+![Atlas × Leshan — three photo skins](./assets/screenshots/00b-leshan-2400x1350.jpg)
 
 Atlas is a theme *pack*, not a single recolour. Each skin declares six input colours per appearance; the engine derives the 119 `--dsw-*` alias tokens the Web shell reads from them, then measures the result. Nine skins × two appearances = eighteen palettes that all share the same semantic rules, so a state that reads in light mode reads in dark.
 
@@ -17,29 +17,29 @@ Two series live in the pack:
 
 | Skin | Material | Accent light / dark | Body contrast | Preview |
 | --- | --- | --- | --- | --- |
-| **墨玉 Ink Jade** | 和田青玉 · 宣纸 / Hetian jade on rice paper | `#2E6B57` / `#74C3A2` | 15.6:1 / 16.0:1 | [light](./assets/screenshots/01-ink-jade-light-1600x1000.png) |
-| **赤陶 Terracotta** | 未上釉的陶土 · 砂 / Unglazed clay and sand | `#AE5229` / `#E08C5F` | 14.9:1 / 15.0:1 | [light](./assets/screenshots/02-terracotta-light-1600x1000.png) |
-| **极光 Aurora** | 极地冰晶 · 夜光 / Polar ice and night glow | `#16758F` / `#55D6D2` | 15.5:1 / 16.3:1 | [light](./assets/screenshots/03-aurora-light-1600x1000.png) |
-| **深海 Abyss** | 深海蓝 · 微光 / Deep water and faint light | `#1B58B4` / `#5B8DEF` | 15.9:1 / 16.1:1 | [light](./assets/screenshots/04-abyss-light-1600x1000.png) |
-| **樱雾 Sakura Mist** | 薄樱 · 雾面 / Thin blossom on mist | `#B1436B` / `#E78BA8` | 15.1:1 / 15.8:1 | [light](./assets/screenshots/05-sakura-light-1600x1000.png) |
-| **素笺 Paper** | 无涂布纸 · 墨 / Uncoated paper and ink | `#1F1F1F` / `#E8E8E8` | 17.9:1 / 16.9:1 | [light](./assets/screenshots/06-paper-light-1600x1000.png) |
-| **三江夜 River Night** | 乐山 · 三江 / Leshan, three rivers | `#A9552F` / `#C97A50` | 15.4:1 / 15.9:1 | [light](./assets/screenshots/09-sanjiang-light-1600x1000.png) · [dark](./assets/screenshots/12-sanjiang-dark-1600x1000.png) |
-| **凌云晚照 Lingyun Dusk** | 乐山 · 崖壁 / Leshan, cliff at dusk | `#8A6320` / `#D3A961` | 15.4:1 / 16.5:1 | [light](./assets/screenshots/10-lingyun-light-1600x1000.png) |
-| **峨眉夜雾 Emei Mist** | 乐山 · 雾与月色 / Leshan, mist and moonlight | `#25618F` / `#7FB2E8` | 16.1:1 / 15.7:1 | [light](./assets/screenshots/11-emei-light-1600x1000.png) |
+| **墨玉 Ink Jade** | 和田青玉 · 宣纸 / Hetian jade on rice paper | `#2E6B57` / `#74C3A2` | 15.6:1 / 16.0:1 | [light](./assets/screenshots/01-ink-jade-light-1600x1000.jpg) |
+| **赤陶 Terracotta** | 未上釉的陶土 · 砂 / Unglazed clay and sand | `#AE5229` / `#E08C5F` | 14.9:1 / 15.0:1 | [light](./assets/screenshots/02-terracotta-light-1600x1000.jpg) |
+| **极光 Aurora** | 极地冰晶 · 夜光 / Polar ice and night glow | `#16758F` / `#55D6D2` | 15.5:1 / 16.3:1 | [light](./assets/screenshots/03-aurora-light-1600x1000.jpg) |
+| **深海 Abyss** | 深海蓝 · 微光 / Deep water and faint light | `#1B58B4` / `#5B8DEF` | 15.9:1 / 16.1:1 | [light](./assets/screenshots/04-abyss-light-1600x1000.jpg) |
+| **樱雾 Sakura Mist** | 薄樱 · 雾面 / Thin blossom on mist | `#B1436B` / `#E78BA8` | 15.1:1 / 15.8:1 | [light](./assets/screenshots/05-sakura-light-1600x1000.jpg) |
+| **素笺 Paper** | 无涂布纸 · 墨 / Uncoated paper and ink | `#1F1F1F` / `#E8E8E8` | 17.9:1 / 16.9:1 | [light](./assets/screenshots/06-paper-light-1600x1000.jpg) |
+| **三江夜 River Night** | 乐山 · 三江 / Leshan, three rivers | `#A9552F` / `#C97A50` | 15.4:1 / 15.9:1 | [light](./assets/screenshots/09-sanjiang-light-1600x1000.jpg) · [dark](./assets/screenshots/12-sanjiang-dark-1600x1000.jpg) |
+| **凌云晚照 Lingyun Dusk** | 乐山 · 崖壁 / Leshan, cliff at dusk | `#8A6320` / `#D3A961` | 15.4:1 / 16.5:1 | [light](./assets/screenshots/10-lingyun-light-1600x1000.jpg) |
+| **峨眉夜雾 Emei Mist** | 乐山 · 雾与月色 / Leshan, mist and moonlight | `#25618F` / `#7FB2E8` | 16.1:1 / 15.7:1 | [light](./assets/screenshots/11-emei-light-1600x1000.jpg) |
 
-Dark examples: [Aurora dark](./assets/screenshots/07-aurora-dark-1600x1000.png) · [Paper dark](./assets/screenshots/08-paper-dark-1600x1000.png) · [River Night dark](./assets/screenshots/12-sanjiang-dark-1600x1000.png). Full palettes, token tables and measured contrast live in [docs/palettes.md](./docs/palettes.md).
+Dark examples: [Aurora dark](./assets/screenshots/07-aurora-dark-1600x1000.jpg) · [Paper dark](./assets/screenshots/08-paper-dark-1600x1000.jpg) · [River Night dark](./assets/screenshots/12-sanjiang-dark-1600x1000.jpg). Full palettes, token tables and measured contrast live in [docs/palettes.md](./docs/palettes.md).
 
 ### 乐山 · Leshan
 
-![Leshan key art — River Night](./assets/keyart/sanjiang-1536x1024.png)
+![Leshan key art — River Night](./assets/keyart/sanjiang-1536x1024.jpg)
 
 The three photographs are used at their native resolution and cover-cropped by the shell. The host half serves them from `/dsh-theme-atlas/wallpapers/<file>` through an exact-file whitelist (immutable caching, HEAD, 304); without a `webServer` service the skin falls back to its wash and stays fully usable.
 
 | Skin | Photograph | Native size | Dark | Light |
 | --- | --- | --- | --- | --- |
-| 三江夜 River Night | `leshan-sanjiang-1448x1086.jpg` | 1448×1086 | `assets/keyart/sanjiang-1536x1024.png` | [shot](./assets/screenshots/09-sanjiang-light-1600x1000.png) |
-| 凌云晚照 Lingyun Dusk | `leshan-lingyun-1536x1024.jpg` | 1536×1024 | `assets/keyart/lingyun-1536x1024.png` | [shot](./assets/screenshots/10-lingyun-light-1600x1000.png) |
-| 峨眉夜雾 Emei Mist | `leshan-emei-1536x1024.jpg` | 1536×1024 | `assets/keyart/emei-1536x1024.png` | [shot](./assets/screenshots/11-emei-light-1600x1000.png) |
+| 三江夜 River Night | `leshan-sanjiang-1448x1086.jpg` | 1448×1086 | `assets/keyart/sanjiang-1536x1024.jpg` | [shot](./assets/screenshots/09-sanjiang-light-1600x1000.jpg) |
+| 凌云晚照 Lingyun Dusk | `leshan-lingyun-1536x1024.jpg` | 1536×1024 | `assets/keyart/lingyun-1536x1024.jpg` | [shot](./assets/screenshots/10-lingyun-light-1600x1000.jpg) |
+| 峨眉夜雾 Emei Mist | `leshan-emei-1536x1024.jpg` | 1536×1024 | `assets/keyart/emei-1536x1024.jpg` | [shot](./assets/screenshots/11-emei-light-1600x1000.jpg) |
 
 ## Install
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1 — 2026-10-30
+
+- Compressed the shipped image set from ~21 MB to ~3.8 MB: UI screenshots and key art are JPEG (q86 4:4:4 / q84), wallpapers re-encoded at q78, icons palette-quantised PNG.
+- Added `scripts/compress.py`; `npm run shots` now renders then compresses.
+
 ## 0.2.0 — 2026-10-30
 
 - Added the **乐山 Leshan** series: three photo skins (三江夜 River Night, 凌云晚照 Lingyun Dusk, 峨眉夜雾 Emei Mist) using author-provided photographs as full-bleed wallpapers.
