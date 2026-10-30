@@ -23,7 +23,7 @@ Every image in this repository is generated, not hand-exported: `npm run shots` 
 | 11 | `assets/keyart/<skin>-1536x1024.png` | 1536×1024 | 3:2 | PNG | key art per skin (material posters, photo-led for Leshan) | `docs/themes.md` |
 | 12 | `assets/wallpapers/leshan-<id>-<w>x<h>.jpg` | native 1448×1086 / 1536×1024 | 4:3-ish | JPEG | the photographs the three Leshan skins use, served at native size and cover-cropped by the shell | runtime, docs |
 
-`screenshots.json` lists eight images — the storefront maximum — chosen as: the Leshan banner, the three Leshan light shots, one Leshan dark shot, and three material shots (Ink Jade, Paper, Aurora dark). The remaining fourteen images are documentation and stay out of the storefront list.
+`screenshots.json` lists eight images — the storefront maximum — chosen as: the Leshan banner, the three Leshan light shots, one Leshan dark shot, and three material shots (Ink Jade, Paper, Aurora dark). The remaining sixteen renders are documentation and stay out of the storefront list.
 
 ## 2. Why these numbers
 
