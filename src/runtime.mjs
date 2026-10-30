@@ -70,13 +70,15 @@ html[data-dsh-atlas="paper"] body {
 /* Wallpaper skins: the shell's own body carries the photograph, under a scrim
    whose alpha comes from the active appearance, so panels can stay frosted. */
 html[data-dsh-atlas-wallpaper] body {
+  /* The skin owns the page painting while a photo skin is active: the shell's
+     own body background must not win by load order. */
   background-image:
     linear-gradient(180deg, var(--atlas-scrim-1) 0%, var(--atlas-scrim-2) 100%),
-    var(--atlas-wallpaper);
-  background-size: cover, cover;
-  background-position: center center, var(--atlas-focus, center 50%);
-  background-attachment: fixed, fixed;
-  background-repeat: no-repeat, no-repeat;
+    var(--atlas-wallpaper) !important;
+  background-size: cover, cover !important;
+  background-position: center center, var(--atlas-focus, center 50%) !important;
+  background-attachment: fixed, fixed !important;
+  background-repeat: no-repeat, no-repeat !important;
 }
 html[data-dsh-atlas] ::selection {
   background: var(--dsw-alias-bg-document-selection);
