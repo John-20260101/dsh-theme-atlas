@@ -1,6 +1,6 @@
 {
   "name": "dsh-theme-atlas",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Atlas: nine skins for the DeepSeek Harness Web GUI — six material studies plus three Leshan photo skins (River Night, Lingyun Dusk, Emei Mist) with user-provided wallpapers, one token engine, light and dark, switched in-app.",
   "type": "module",
   "license": "MIT",
