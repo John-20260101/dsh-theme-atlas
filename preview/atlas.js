@@ -17,6 +17,17 @@
   root.dataset.skin = skin.id
   root.dataset.mode = mode
   document.body.dataset.signature = skin.signature
+  if (skin.wallpaper) {
+    document.body.style.backgroundImage = `url(../assets/wallpapers/${skin.wallpaper.file})`
+    document.body.style.backgroundPosition = skin.wallpaper.focus || 'center'
+    const scrim = (a) => {
+      const hex = skin[mode].bg
+      const n = parseInt(hex.slice(1), 16)
+      return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`
+    }
+    root.style.setProperty('--atlas-scrim-1', scrim(mode === 'dark' ? 0.8 : 0.92))
+    root.style.setProperty('--atlas-scrim-2', scrim(mode === 'dark' ? 0.88 : 0.95))
+  }
   if (mode === 'dark') document.body.setAttribute('data-ds-dark-theme', '')
 
   const set = (selector, text) => {
@@ -25,11 +36,39 @@
   }
   const modeLabel = mode === 'dark' ? '深色' : '浅色'
   set('#foot-name', skin.name.zh)
-  set('#foot-mode', modeLabel)
+  set('#foot-mode', skin.wallpaper ? `${modeLabel} · 照片` : modeLabel)
   set('#top-mode', modeLabel)
   set('#body-skin', skin.name.zh)
 
+  const note = document.querySelector('#tool-note')
+  if (note) note.textContent = `${data.skins.length} skins × 2 modes, all floors met`
+
+  const tbody = document.querySelector('#palette-rows')
+  if (tbody && skin.series === 'leshan') {
+    tbody.innerHTML = data.skins.filter((item) => item.series === 'leshan').map((item) => {
+      const light = data.palette[item.id].contrast.find((c) => c.mode === 'light')
+      const dark = data.palette[item.id].contrast.find((c) => c.mode === 'dark')
+      return `<tr><td><b>${item.name.zh}</b> ${item.name.en}</td><td><code class="inline">${item.light.accent}</code></td><td>${light.body.toFixed(1)}</td><td>${dark.body.toFixed(1)}</td></tr>`
+    }).join('')
+  }
+
   const row = entry.contrast.find((item) => item.mode === mode) || { body: 0, buttonLabel: 0 }
+  if (skin.wallpaper) {
+    const lead = document.querySelector('#lead')
+    if (lead) {
+      lead.innerHTML = `乐山这组直接用照片做底：<b>${skin.name.zh}</b> 用 <code class="inline">${skin.wallpaper.file}</code> 铺满窗口，罩层按外观取 0.74（深）／0.86（浅），面板转成半透明磨砂，正文对比度仍有 <b>${row.body.toFixed(1)}</b>:1。`
+    }
+    const block = document.querySelector('#code-block')
+    if (block) {
+      block.innerHTML = `<span class="c">// 照片皮肤只多一个 wallpaper 字段</span>
+<span class="k">wallpaper</span>: {
+  file: <span class="s">'${skin.wallpaper.file}'</span>,
+  focus: <span class="s">'${skin.wallpaper.focus}'</span>,
+  scrim: { light: <span class="n">0.86</span>, dark: <span class="n">0.74</span> },
+}`
+    }
+  }
+
   set('#body-contrast', row.body.toFixed(1))
   set('#body-button', row.buttonLabel.toFixed(1))
 

@@ -84,27 +84,27 @@
           <div>
             <div class="ai-head"><b>DeepSeek</b><span>刚刚 · V4.1</span></div>
             <div class="ai-body">
-              <p>先按现有 token 体系试了一版 <b id="body-skin">墨玉</b>：纸底保持暖白，强调色压到青玉的灰绿上。正文对比度 <b id="body-contrast">15.6</b>:1，主按钮标签 <b id="body-button">6.0</b>:1，都过 AAA。</p>
+              <p id="lead">先按现有 token 体系试了一版 <b id="body-skin">墨玉</b>：纸底保持暖白，强调色压到青玉的灰绿上。正文对比度 <b id="body-contrast">15.6</b>:1，主按钮标签 <b id="body-button">6.0</b>:1，都过 AAA。</p>
               <div class="code">
                 <div class="code-head">src/skins.mjs<span class="dotrow"><i></i><i></i><i></i></span></div>
-                <pre><span class="c">// 一套皮肤只声明六个输入色</span>
+                <pre id="code-block"><span class="c">// 一套皮肤只声明六个输入色</span>
 <span class="k">light</span>: {
   bg: <span class="s">'#F5F7F3'</span>, plate: <span class="s">'#FFFFFF'</span>, ink: <span class="s">'#14201B'</span>,
   muted: <span class="s">'#56685F'</span>, accent: <span class="s">'#2E6B57'</span>, onAccent: <span class="s">'#F7FBF8'</span>,
 }</pre>
               </div>
-              <div class="tool"><span class="ok">✓</span><span class="cmd">pnpm verify</span><span>6 skins × 2 modes, all floors met</span><span class="dur">0.4s</span></div>
+              <div class="tool"><span class="ok">✓</span><span class="cmd">pnpm verify</span><span id="tool-note">6 skins × 2 modes, all floors met</span><span class="dur">0.4s</span></div>
               <div class="table">
                 <table>
                   <thead><tr><th>皮肤</th><th>主色</th><th>浅色正文</th><th>深色正文</th></tr></thead>
-                  <tbody>
+                  <tbody id="palette-rows">
                     <tr><td><b>墨玉</b> Ink Jade</td><td><code class="inline">#2E6B57</code></td><td>15.6</td><td>16.0</td></tr>
                     <tr><td><b>赤陶</b> Terracotta</td><td><code class="inline">#AE5229</code></td><td>14.9</td><td>15.0</td></tr>
                     <tr><td><b>极光</b> Aurora</td><td><code class="inline">#16758F</code></td><td>15.5</td><td>16.3</td></tr>
                   </tbody>
                 </table>
               </div>
-              <p>其余 110 多个 <code class="inline">--dsw-*</code> 由推导规则生成，所以六套皮肤共用一套语义，不会出现「某个状态色只在深色下能看」的问题。</p>
+              <p>其余 110 多个 <code class="inline">--dsw-*</code> 由同一套推导规则生成，皮肤之间共用一套语义，不会出现「某个状态色只在深色下能看」的问题。</p>
             </div>
           </div>
         </div>

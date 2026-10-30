@@ -394,11 +394,106 @@ window.__ModuleLoader__.load({
           success: '#7FC79B', warn: '#DFB169', accent2: '#3A3A3A',
         },
       },
+      {
+        id: 'sanjiang',
+        series: 'leshan',
+        name: { zh: '三江夜', en: 'River Night' },
+        material: { zh: '岷江 · 青衣江 · 大渡河', en: 'Three rivers at blue hour' },
+        story: {
+          zh: '江面把城市的灯揉成一条条暖线，山影是冷的。暖色只留给按钮和状态灯。',
+          en: 'City lights smeared into warm lines on the water; the hills stay cold. Warmth is reserved for buttons and state.',
+        },
+        swatch: ['#C97A50', '#3E6A55', '#08131C'],
+        signature: 'wallpaper',
+        wallpaper: {
+          file: 'leshan-sanjiang-1448x1086.jpg',
+          width: 1448,
+          height: 1086,
+          focus: 'center 55%',
+          alt: { zh: '乐山三江夜色（用户提供照片）', en: 'Leshan rivers at night (user-provided photograph)' },
+        },
+        light: {
+          bg: '#F4F6F5', plate: '#FFFFFF', ink: '#14201F', muted: '#566663',
+          accent: '#A9552F', onAccent: '#FFF7F2', danger: '#A93C2C',
+          success: '#3F7A55', warn: '#96701B', accent2: '#3E6A55',
+        },
+        dark: {
+          bg: '#08131C', plate: '#0F1D27', ink: '#E4EEF2', muted: '#9CB0B8',
+          accent: '#C97A50', onAccent: '#1A0E08', danger: '#E07A67',
+          success: '#6BBF95', warn: '#DFAF5F', accent2: '#3E6A55',
+        },
+      },
+      {
+        id: 'lingyun',
+        series: 'leshan',
+        name: { zh: '凌云晚照', en: 'Lingyun Dusk' },
+        material: { zh: '崖壁 · 晚钟', en: 'Cliff face at the evening bell' },
+        story: {
+          zh: '砂岩吸走最后一点日光，只剩金褐色的边。全套里唯一以暖色为主调的深色皮肤。',
+          en: 'Sandstone holds the last daylight as a gold-brown edge — the only warm-led dark skin in the pack.',
+        },
+        swatch: ['#D3A961', '#4A6E9E', '#0A1220'],
+        signature: 'wallpaper',
+        wallpaper: {
+          file: 'leshan-lingyun-1536x1024.jpg',
+          width: 1536,
+          height: 1024,
+          focus: 'center 45%',
+          alt: { zh: '乐山凌云山晚照（用户提供照片）', en: 'Lingyun hill at dusk (user-provided photograph)' },
+        },
+        light: {
+          bg: '#F7F2E8', plate: '#FFFDF8', ink: '#201A14', muted: '#6B5C4A',
+          accent: '#8A6320', onAccent: '#FFF9EE', danger: '#A83A2A',
+          success: '#4F7A46', warn: '#96701B', accent2: '#C9A25C',
+        },
+        dark: {
+          bg: '#0A1220', plate: '#111C2B', ink: '#ECF1F8', muted: '#A3B1C2',
+          accent: '#D3A961', onAccent: '#171006', danger: '#E88A74',
+          success: '#79C39C', warn: '#E0B05E', accent2: '#C9A25C',
+        },
+      },
+      {
+        id: 'emei',
+        series: 'leshan',
+        name: { zh: '峨眉夜雾', en: 'Emei Mist' },
+        material: { zh: '冷雾 · 月色', en: 'Cold mist and moonlight' },
+        story: {
+          zh: '整夜都是蓝的：雾把山脊擦掉，只留下很低的对比和一条月色边线。',
+          en: 'Blue all night: mist erases the ridge, leaving very low contrast and a thin moonlit edge.',
+        },
+        swatch: ['#7FB2E8', '#4C6A8C', '#081320'],
+        signature: 'wallpaper',
+        wallpaper: {
+          file: 'leshan-emei-1536x1024.jpg',
+          width: 1536,
+          height: 1024,
+          focus: 'center 60%',
+          alt: { zh: '峨眉山夜雾（用户提供照片）', en: 'Emei mist at night (user-provided photograph)' },
+        },
+        light: {
+          bg: '#F1F5FA', plate: '#FFFFFF', ink: '#0E1A26', muted: '#4C6072',
+          accent: '#25618F', onAccent: '#F4FAFF', danger: '#B23B32',
+          success: '#2F7A55', warn: '#8F6C14', accent2: '#7FA6C9',
+        },
+        dark: {
+          bg: '#081320', plate: '#0F1D2C', ink: '#E2EDF7', muted: '#98AEC2',
+          accent: '#7FB2E8', onAccent: '#06121E', danger: '#EF8075',
+          success: '#5FC49C', warn: '#E4B25F', accent2: '#4C6A8C',
+        },
+      },
     ]
 
     /** Look a skin up by id. */
     function getSkin(id) {
       return SKINS.find((skin) => skin.id === id) ?? SKINS[0]
+    }
+
+    /**
+     * Series label shown by the rail. Skins without a `series` are the original
+     * material studies; the Leshan set carries photographs as wallpapers.
+     */
+    function seriesOf(skin) {
+      return skin.series ?? 'material'
     }
 
     /** The skin the rail starts on when nothing is stored. */
@@ -601,6 +696,40 @@ window.__ModuleLoader__.load({
         '--dsw-specific-tip': layer3,
       }
 
+      // Wallpaper skins: the shell paints photographs on <body>, so the panels
+      // above it turn into frosted plates. Alpha is kept high enough that measured
+      // contrast survives the photograph underneath.
+      if (options.glass === true) {
+        const glass = {
+          '--dsw-alias-bg-layer-1': 0.74,
+          '--dsw-alias-bg-layer-2': 0.8,
+          '--dsw-alias-bg-layer-3': 0.84,
+          '--dsw-alias-bg-overlay': 0.86,
+          '--dsw-alias-bg-module-platform': 0.82,
+          '--dsw-alias-bg-multi-select': 0.88,
+          '--dsw-alias-bg-document-preview': 0.9,
+          '--dsw-alias-settings-card-fill': 0.82,
+          '--dsw-alias-button-elevated-fill': 0.88,
+          '--dsw-alias-button-floating-fill': 0.88,
+          '--dsw-alias-markdown-code-block': 0.84,
+          '--dsw-alias-markdown-code-block-banner': 0.78,
+          '--dsw-alias-menu-group-header-fill': 0.9,
+          '--dsw-menu-surface-fill': 0.94,
+          '--dsw-specific-menu': 0.94,
+          '--dsw-specific-selector': 0.88,
+          '--dsw-specific-sidebar-fill': 0.34,
+          '--dsw-specific-input-major': 0.84,
+          '--dsw-specific-login-input': 0.78,
+          '--dsw-specific-bubble': 0.78,
+          '--dsw-specific-bubble-highlight': 0.84,
+          '--dsw-specific-tip': 0.88,
+        }
+        for (const [name, value] of Object.entries(glass)) {
+          const current = tokens[name]
+          if (current !== undefined && !current.startsWith('rgba')) tokens[name] = alpha(current, value)
+        }
+      }
+
       // The list is the contract: never silently drop a token the shell reads.
       for (const name of TOKEN_NAMES) {
         if (!(name in tokens)) throw new Error(`deriveTokens: missing ${name}`)
@@ -614,8 +743,8 @@ window.__ModuleLoader__.load({
     /** Derive both appearances of a skin. */
     function deriveSkin(skin) {
       return {
-        light: deriveTokens(skin.light, { dark: false, signature: skin.signature }),
-        dark: deriveTokens(skin.dark, { dark: true, signature: skin.signature }),
+        light: deriveTokens(skin.light, { dark: false, signature: skin.signature, glass: skin.wallpaper !== undefined }),
+        dark: deriveTokens(skin.dark, { dark: true, signature: skin.signature, glass: skin.wallpaper !== undefined }),
       }
     }
 
@@ -624,7 +753,11 @@ window.__ModuleLoader__.load({
       const rows = []
       for (const mode of ['light', 'dark']) {
         const palette = skin[mode]
-        const tokens = deriveTokens(palette, { dark: mode === 'dark', signature: skin.signature })
+        const tokens = deriveTokens(palette, {
+          dark: mode === 'dark',
+          signature: skin.signature,
+          glass: skin.wallpaper !== undefined,
+        })
         rows.push({
           mode,
           body: contrast(tokens['--dsw-alias-label-primary'], palette.bg),
@@ -710,6 +843,17 @@ window.__ModuleLoader__.load({
     html[data-dsh-atlas="paper"] body {
       background-image: none;
     }
+    /* Wallpaper skins: the shell's own body carries the photograph, under a scrim
+       whose alpha comes from the active appearance, so panels can stay frosted. */
+    html[data-dsh-atlas-wallpaper] body {
+      background-image:
+        linear-gradient(180deg, var(--atlas-scrim-1) 0%, var(--atlas-scrim-2) 100%),
+        var(--atlas-wallpaper);
+      background-size: cover, cover;
+      background-position: center center, var(--atlas-focus, center 50%);
+      background-attachment: fixed, fixed;
+      background-repeat: no-repeat, no-repeat;
+    }
     html[data-dsh-atlas] ::selection {
       background: var(--dsw-alias-bg-document-selection);
     }
@@ -775,6 +919,11 @@ window.__ModuleLoader__.load({
         .head strong { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; opacity: .55; }
         .head span { font-size: 10.5px; opacity: .45; }
         .grid { display: grid; gap: 6px; }
+        .group {
+          padding: 8px 6px 3px; font-size: 9.5px; font-weight: 600;
+          letter-spacing: .14em; text-transform: uppercase; opacity: .45;
+        }
+        .group:first-child { padding-top: 2px; }
         .skin {
           display: flex; align-items: center; gap: 9px; padding: 7px 8px;
           border-radius: 10px; cursor: pointer; text-align: left;
@@ -844,7 +993,18 @@ window.__ModuleLoader__.load({
       grid.setAttribute('aria-label', '皮肤')
 
       const buttons = new Map()
-      for (const skin of deps.skins) {
+      const groups = [
+        ['material', '材质 · MATERIAL'],
+        ['leshan', '乐山 · LESHAN'],
+      ]
+      for (const [series, label] of groups) {
+        const items = deps.skins.filter((item) => deps.seriesOf(item) === series)
+        if (items.length === 0) continue
+        const heading = document.createElement('div')
+        heading.className = 'group'
+        heading.textContent = label
+        grid.append(heading)
+        for (const skin of items) {
         const button = document.createElement('button')
         button.type = 'button'
         button.className = 'skin'
@@ -871,6 +1031,7 @@ window.__ModuleLoader__.load({
         button.addEventListener('click', () => deps.select(skin.id))
         grid.append(button)
         buttons.set(skin.id, { button, chip })
+        }
       }
 
       const foot = document.createElement('div')
@@ -938,7 +1099,7 @@ window.__ModuleLoader__.load({
      * @param {{ skins: object[], getSkin: (id: string) => object, deriveSkin: (skin: object) => object, defaultSkin: string }} core
      */
     function applyAtlas(ctx, core) {
-      const { skins, getSkin, deriveSkin, defaultSkin } = core
+      const { skins, getSkin, deriveSkin, defaultSkin, seriesOf } = core
 
       const stored = read(KEY_SKIN)
       let activeId = skins.some((skin) => skin.id === stored) ? stored : defaultSkin
@@ -987,10 +1148,25 @@ window.__ModuleLoader__.load({
 
       const paint = () => {
         const skin = current()
+        const palette = skin[mode()]
         html.setAttribute('data-dsh-atlas', skin.id)
-        html.style.setProperty('--atlas-a', skin[mode()].accent)
-        html.style.setProperty('--atlas-b', skin[mode()].accent2)
+        html.style.setProperty('--atlas-a', palette.accent)
+        html.style.setProperty('--atlas-b', palette.accent2)
         html.setAttribute('data-dsh-atlas-mode', mode())
+        if (skin.wallpaper !== undefined) {
+          // The host route serves assets/wallpapers; alpha scrims keep text legible.
+          html.setAttribute('data-dsh-atlas-wallpaper', '')
+          html.style.setProperty('--atlas-wallpaper', `url('/dsh-theme-atlas/wallpapers/${skin.wallpaper.file}')`)
+          html.style.setProperty('--atlas-focus', skin.wallpaper.focus ?? 'center 50%')
+          html.style.setProperty('--atlas-scrim-1', alpha(palette.bg, mode() === 'dark' ? 0.74 : 0.86))
+          html.style.setProperty('--atlas-scrim-2', alpha(palette.bg, mode() === 'dark' ? 0.82 : 0.9))
+        } else {
+          html.removeAttribute('data-dsh-atlas-wallpaper')
+          html.style.removeProperty('--atlas-wallpaper')
+          html.style.removeProperty('--atlas-focus')
+          html.style.removeProperty('--atlas-scrim-1')
+          html.style.removeProperty('--atlas-scrim-2')
+        }
         applyTokens()
         rail?.refresh()
       }
@@ -1022,6 +1198,7 @@ window.__ModuleLoader__.load({
       ctx.effect(() => {
         rail = createRail({
           skins,
+          seriesOf,
           current,
           mode,
           select,
@@ -1074,7 +1251,7 @@ window.__ModuleLoader__.load({
     }
 
 
-    const core = { skins: SKINS, getSkin, deriveSkin, defaultSkin: DEFAULT_SKIN }
+    const core = { skins: SKINS, getSkin, deriveSkin, defaultSkin: DEFAULT_SKIN, seriesOf }
     return {
       name: 'themeAtlas',
       inject: [],

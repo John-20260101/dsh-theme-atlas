@@ -63,7 +63,7 @@ ${core.join('\n')
   .map((line) => (line.length > 0 ? `    ${line}` : line))
   .join('\n')}
 
-    const core = { skins: SKINS, getSkin, deriveSkin, defaultSkin: DEFAULT_SKIN }
+    const core = { skins: SKINS, getSkin, deriveSkin, defaultSkin: DEFAULT_SKIN, seriesOf }
     return {
       name: 'themeAtlas',
       inject: [],
@@ -78,7 +78,7 @@ ${core.join('\n')
 await writeFile(join(ROOT, 'client.js'), client, 'utf8')
 
 // Preview data: the static pages import this instead of the plugin bundle.
-const { SKINS } = await import(join(ROOT, 'src/skins.mjs'))
+const { SKINS, seriesOf } = await import(join(ROOT, 'src/skins.mjs'))
 const { deriveSkin, contrastReport } = await import(join(ROOT, 'src/derive.mjs'))
 
 const palette = {}

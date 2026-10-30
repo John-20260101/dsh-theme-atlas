@@ -196,6 +196,40 @@ export function deriveTokens(palette, options) {
     '--dsw-specific-tip': layer3,
   }
 
+  // Wallpaper skins: the shell paints photographs on <body>, so the panels
+  // above it turn into frosted plates. Alpha is kept high enough that measured
+  // contrast survives the photograph underneath.
+  if (options.glass === true) {
+    const glass = {
+      '--dsw-alias-bg-layer-1': 0.74,
+      '--dsw-alias-bg-layer-2': 0.8,
+      '--dsw-alias-bg-layer-3': 0.84,
+      '--dsw-alias-bg-overlay': 0.86,
+      '--dsw-alias-bg-module-platform': 0.82,
+      '--dsw-alias-bg-multi-select': 0.88,
+      '--dsw-alias-bg-document-preview': 0.9,
+      '--dsw-alias-settings-card-fill': 0.82,
+      '--dsw-alias-button-elevated-fill': 0.88,
+      '--dsw-alias-button-floating-fill': 0.88,
+      '--dsw-alias-markdown-code-block': 0.84,
+      '--dsw-alias-markdown-code-block-banner': 0.78,
+      '--dsw-alias-menu-group-header-fill': 0.9,
+      '--dsw-menu-surface-fill': 0.94,
+      '--dsw-specific-menu': 0.94,
+      '--dsw-specific-selector': 0.88,
+      '--dsw-specific-sidebar-fill': 0.34,
+      '--dsw-specific-input-major': 0.84,
+      '--dsw-specific-login-input': 0.78,
+      '--dsw-specific-bubble': 0.78,
+      '--dsw-specific-bubble-highlight': 0.84,
+      '--dsw-specific-tip': 0.88,
+    }
+    for (const [name, value] of Object.entries(glass)) {
+      const current = tokens[name]
+      if (current !== undefined && !current.startsWith('rgba')) tokens[name] = alpha(current, value)
+    }
+  }
+
   // The list is the contract: never silently drop a token the shell reads.
   for (const name of TOKEN_NAMES) {
     if (!(name in tokens)) throw new Error(`deriveTokens: missing ${name}`)
@@ -209,8 +243,8 @@ export function deriveTokens(palette, options) {
 /** Derive both appearances of a skin. */
 export function deriveSkin(skin) {
   return {
-    light: deriveTokens(skin.light, { dark: false, signature: skin.signature }),
-    dark: deriveTokens(skin.dark, { dark: true, signature: skin.signature }),
+    light: deriveTokens(skin.light, { dark: false, signature: skin.signature, glass: skin.wallpaper !== undefined }),
+    dark: deriveTokens(skin.dark, { dark: true, signature: skin.signature, glass: skin.wallpaper !== undefined }),
   }
 }
 
@@ -219,7 +253,11 @@ export function contrastReport(skin) {
   const rows = []
   for (const mode of ['light', 'dark']) {
     const palette = skin[mode]
-    const tokens = deriveTokens(palette, { dark: mode === 'dark', signature: skin.signature })
+    const tokens = deriveTokens(palette, {
+      dark: mode === 'dark',
+      signature: skin.signature,
+      glass: skin.wallpaper !== undefined,
+    })
     rows.push({
       mode,
       body: contrast(tokens['--dsw-alias-label-primary'], palette.bg),

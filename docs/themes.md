@@ -1,7 +1,7 @@
 # Atlas theme document / 主题文档
 
-> A pack of six material skins for the DeepSeek Harness Web GUI.
-> 六套材质皮肤的设计说明：设计原则、token 推导规则、色彩策略与扩展方式。
+> A pack of nine skins for the DeepSeek Harness Web GUI — six material studies and three Leshan photo skins.
+> 九套皮肤的设计说明：设计原则、token 推导规则、照片皮肤的色彩与磨砂策略、扩展方式。
 >
 > Companion references: [palettes.md](./palettes.md) (every hex and every measured ratio) · [images.md](./images.md) (every image size) · [../README.md](../README.md) (install).
 
@@ -23,7 +23,7 @@ The visible result: a theme can be described in one sentence (“jade grey on wa
 
 ## 2. Design principles
 
-**Material first, fashion second.** Each skin is named after a material and is built from that material's relationship between paper, pigment and accent — not from a hue that happens to be trending. 素笺 has almost no chroma; 极光 has two. Both are complete.
+**Material first, fashion second.** Each skin is named after a material and is built from that material's relationship between paper, pigment and accent — not from a hue that happens to be trending. 素笺 has almost no chroma; 极光 has two. Both are complete. The Leshan series extends the same rule to a photograph: the picture is the material, and the skin is built from what it is made of (water light, sandstone, mist).
 
 **One temperature per skin.** A skin does not mix a warm page with a cool accent without a reason. Where two hues appear (Aurora's teal and violet, Sakura's rose and dust), the second hue is confined to the signature wash and the rail swatch — never to a semantic token.
 
@@ -74,11 +74,27 @@ The full derivation is `src/derive.mjs`; the resulting tables are [palettes.md](
 | Button label on fill | 4.5:1 | AA for the most-used control |
 | Caption / metadata | 3.0:1 | small type stays legible without shouting |
 
-Measured values for all twelve palettes are in [palettes.md](./palettes.md). The gate that produced them is `scripts/verify.mjs`, also run by CI.
+Measured values for all eighteen palettes are in [palettes.md](./palettes.md). The gate that produced them is `scripts/verify.mjs`, also run by CI.
+
+### Photo skins: frosted plates
+
+A wallpaper skin adds one field to the same six inputs:
+
+```js
+wallpaper: { file: 'leshan-sanjiang-1448x1086.jpg', focus: 'center 55%', width: 1448, height: 1086 }
+```
+
+Three things change, and only three:
+
+1. **Surface tokens carry alpha.** Layers, inputs, menus, bubbles and code blocks are emitted as `rgba()` at 0.78–0.94 instead of opaque, so the photograph is visible through every panel. The page (`bg-base`) stays opaque; the photograph lives on `<body>` under the scrim.
+2. **The scrim is appearance-keyed.** Light uses 0.86 → 0.90 over the page colour, dark 0.74 → 0.82. Light mode deliberately reads as a milky haze; the photo is texture, not the subject. Dark mode lets the photograph lead.
+3. **Photographs are served, not embedded.** The host half exposes `/dsh-theme-atlas/wallpapers/<file>` as an exact-file whitelist (GET/HEAD, strong ETag, immutable cache, 304). Without `webServer` the route is absent and the browser half falls back to the wash — no broken image, no layout shift.
+
+Because the scrim composites to very nearly the palette's own page colour, the contrast numbers computed against `bg` remain representative; the gate still runs on the palette, and the screenshots verify the real composite.
 
 ---
 
-## 4. The six skins
+## 4. The material studies
 
 ### 墨玉 · Ink Jade
 *和田青玉 · 宣纸 / Hetian jade on rice paper*
@@ -136,13 +152,47 @@ Best for: comparative reading, screenshots, printing. Contrast 17.9:1 / 16.9:1.
 
 ---
 
-## 5. Appearance behaviour
+## 5. The Leshan series
+
+Three photographs, provided by the author, each carrying its own palette. They share a structure — photograph on `<body>`, translucent plates above it, one warm or cool accent — but not a mood: one is warm-led, one gold-led, one cold-led.
+
+The photographs are used at native resolution (1448×1086 and 1536×1024) and cover-cropped by the shell, so the pack ships three JPEGs rather than a wall of re-encoded sizes.
+
+### 三江夜 · River Night
+*岷江 · 青衣江 · 大渡河 / Three rivers at blue hour*
+
+![River Night key art](../assets/keyart/sanjiang-1536x1024.png)
+
+Warm lantern light smeared across a cold river. The accent is the lantern's terracotta, the second hue is the hill green; everything else is blue-hour navy. This is the warmest of the three and the one that reads best as a full-bleed image.
+
+Contrast 15.4:1 / 15.9:1. Preview: [light](../assets/screenshots/09-sanjiang-light-1600x1000.png) · [dark](../assets/screenshots/12-sanjiang-dark-1600x1000.png).
+
+### 凌云晚照 · Lingyun Dusk
+*崖壁 · 晚钟 / Cliff face at the evening bell*
+
+![Lingyun Dusk key art](../assets/keyart/lingyun-1536x1024.png)
+
+Sandstone holding the last of the daylight: gold-brown accent on navy, the only warm-led dark skin in the pack. In light mode the page turns to a warm paper so the photograph does not fight it.
+
+Contrast 15.4:1 / 16.5:1. Preview: [light](../assets/screenshots/10-lingyun-light-1600x1000.png).
+
+### 峨眉夜雾 · Emei Mist
+*冷雾 · 月色 / Cold mist and moonlight*
+
+![Emei Mist key art](../assets/keyart/emei-1536x1024.png)
+
+Blue all night: the mist erases the ridge, the palette keeps a very low temperature and a thin moonlit accent. The coolest of the three, and the one closest to the pack's 深海 skin in temperature but far softer in contrast.
+
+Contrast 16.1:1 / 15.7:1. Preview: [light](../assets/screenshots/11-emei-light-1600x1000.png).
+
+## 6. Appearance behaviour
 
 - Atlas ships both palettes in one token layer (`{ light, dark }` per token) and lets the shell decide. It never calls `setTheme`.
 - The signature wash reads the *active* appearance through `html[data-dsh-atlas-mode]` and the shell's `body[data-ds-dark-theme]` attribute, so the atmosphere follows your Appearance setting without a reload.
 - Switching skins is instantaneous: the previous override is disposed and the new layer is registered in the same tick.
+- Wallpaper skins re-key their scrim on the same appearance change, so switching light/dark moves the photograph from "haze" to "subject" without a reload.
 
-## 6. Adding a skin
+## 7. Adding a skin
 
 ```js
 // src/skins.mjs
@@ -152,7 +202,8 @@ Best for: comparative reading, screenshots, printing. Contrast 17.9:1 / 16.9:1.
   material: { zh: '玄武岩 · 火山灰', en: 'Basalt and ash' },
   story: { zh: '……', en: '…' },
   swatch: ['#3A3F41', '#8B9497', '#F2F2F0'],
-  signature: 'plain',           // or jade / clay / aurora / abyss / mist / paper
+  signature: 'plain',           // or jade / clay / aurora / abyss / mist / paper / wallpaper
+  // wallpaper: { file, focus, width, height },   // only for photo skins
   light: { bg, plate, ink, muted, accent, onAccent, danger, success, warn, accent2 },
   dark:  { … },
 }
@@ -167,9 +218,11 @@ npm run shots    # re-render the preview and key art at the documented sizes
 
 The gate reports the measured ratios; if a floor fails it names the skin and the role, so the fix is a colour change rather than a guessing game.
 
-## 7. Known limits
+## 8. Known limits
 
 - The engine derives from six roles; it cannot express a skin that needs two *semantic* accents (for example a product that wants blue for links and violet for selection). That is a deliberate constraint.
 - `color-mix()` is required for the signature wash. On an older browser the wash drops out and the token layer still applies.
 - The rail is a floating control. It is hidden by default only after you ask it to be; there is no settings-page surface yet.
 - Preview screenshots are rendered from a static reconstruction of the shell ([`preview/`](../preview)), not captured from a live window; they are accurate for colour and layout grammar, not pixel-identical to your build.
+- Photo skins depend on the host serving `assets/wallpapers`; a host without `webServer` gets the wash-only version. The photographs are cover-cropped, so a very wide window shows less of the frame than the key art does.
+- Light appearance keeps the photograph faint on purpose. If a photo skin should lead in daylight, that needs a per-skin scrim override, not a global change.

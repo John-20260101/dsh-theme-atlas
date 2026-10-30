@@ -1,7 +1,7 @@
 {
   "name": "dsh-theme-atlas",
   "version": "0.1.0",
-  "description": "Atlas: six material skins (Ink Jade, Terracotta, Aurora, Abyss, Sakura, Paper) for the DeepSeek Harness Web GUI — one token engine, light and dark, switched from an in-app rail.",
+  "description": "Atlas: nine skins for the DeepSeek Harness Web GUI — six material studies plus three Leshan photo skins (River Night, Lingyun Dusk, Emei Mist) with user-provided wallpapers, one token engine, light and dark, switched in-app.",
   "type": "module",
   "license": "MIT",
   "author": "John-20260101",
@@ -18,7 +18,9 @@
     "deepseek-harness",
     "theme",
     "skin",
-    "tokens"
+    "tokens",
+    "leshan",
+    "wallpaper"
   ],
   "main": "index.js",
   "exports": {
@@ -62,7 +64,7 @@
     "build": "node scripts/build.mjs",
     "verify": "node scripts/build.mjs && node scripts/verify.mjs",
     "shots": "node scripts/shots.mjs",
-    "test": "node scripts/verify.mjs && node tests/assets.mjs && node tests/client.mjs",
+    "test": "node scripts/verify.mjs && node tests/assets.mjs && node tests/host.mjs && node tests/client.mjs",
     "test:client": "node tests/client.mjs"
   },
   "devDependencies": {

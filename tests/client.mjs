@@ -79,7 +79,15 @@ try {
     }
     document.body.setAttribute('data-ds-dark-theme', '')
     const darkAccent = document.documentElement.style.getPropertyValue('--atlas-a')
-    return { first, second, darkAccent, lightAccent: first.wash }
+    const paperWallpaper = document.documentElement.hasAttribute('data-dsh-atlas-wallpaper')
+    window.__DSH_ATLAS__.apply('sanjiang')
+    const wallpaper = {
+      attr: document.documentElement.getAttribute('data-dsh-atlas-wallpaper'),
+      url: document.documentElement.style.getPropertyValue('--atlas-wallpaper'),
+      scrim: document.documentElement.style.getPropertyValue('--atlas-scrim-1'),
+      tokens: Object.keys(window.__LAYER.layer).length,
+    }
+    return { first, second, darkAccent, lightAccent: first.wash, paperWallpaper, wallpaper }
   })
 
   if (result.first.id !== 'dsh-theme-atlas') fail(`module id ${result.first.id}`)
@@ -92,6 +100,11 @@ try {
   if (result.second.disposed < 1) fail('previous token layer was not disposed on switch')
   if (result.second.tokens !== 119) fail('switched layer is incomplete')
   if (result.lightAccent === result.darkAccent) fail('signature wash did not follow the appearance')
+  if (result.paperWallpaper) fail('a non-wallpaper skin set the wallpaper attribute')
+  if (result.wallpaper.attr === null) fail('wallpaper skin did not set the attribute')
+  if (!result.wallpaper.url.includes('leshan-sanjiang')) fail(`wallpaper url ${result.wallpaper.url}`)
+  if (!result.wallpaper.scrim.startsWith('rgba')) fail('wallpaper scrim is not translucent')
+  if (result.wallpaper.tokens !== 119) fail('wallpaper skin layer is incomplete')
 
   if (process.exitCode !== 1) {
     console.log(`client OK — 119 tokens, rail, switch, ${result.first.effects.length} effects`)

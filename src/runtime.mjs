@@ -67,6 +67,17 @@ html[data-dsh-atlas="sakura"] body {
 html[data-dsh-atlas="paper"] body {
   background-image: none;
 }
+/* Wallpaper skins: the shell's own body carries the photograph, under a scrim
+   whose alpha comes from the active appearance, so panels can stay frosted. */
+html[data-dsh-atlas-wallpaper] body {
+  background-image:
+    linear-gradient(180deg, var(--atlas-scrim-1) 0%, var(--atlas-scrim-2) 100%),
+    var(--atlas-wallpaper);
+  background-size: cover, cover;
+  background-position: center center, var(--atlas-focus, center 50%);
+  background-attachment: fixed, fixed;
+  background-repeat: no-repeat, no-repeat;
+}
 html[data-dsh-atlas] ::selection {
   background: var(--dsw-alias-bg-document-selection);
 }
@@ -132,6 +143,11 @@ function createRail(deps) {
     .head strong { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; opacity: .55; }
     .head span { font-size: 10.5px; opacity: .45; }
     .grid { display: grid; gap: 6px; }
+    .group {
+      padding: 8px 6px 3px; font-size: 9.5px; font-weight: 600;
+      letter-spacing: .14em; text-transform: uppercase; opacity: .45;
+    }
+    .group:first-child { padding-top: 2px; }
     .skin {
       display: flex; align-items: center; gap: 9px; padding: 7px 8px;
       border-radius: 10px; cursor: pointer; text-align: left;
@@ -201,7 +217,18 @@ function createRail(deps) {
   grid.setAttribute('aria-label', '皮肤')
 
   const buttons = new Map()
-  for (const skin of deps.skins) {
+  const groups = [
+    ['material', '材质 · MATERIAL'],
+    ['leshan', '乐山 · LESHAN'],
+  ]
+  for (const [series, label] of groups) {
+    const items = deps.skins.filter((item) => deps.seriesOf(item) === series)
+    if (items.length === 0) continue
+    const heading = document.createElement('div')
+    heading.className = 'group'
+    heading.textContent = label
+    grid.append(heading)
+    for (const skin of items) {
     const button = document.createElement('button')
     button.type = 'button'
     button.className = 'skin'
@@ -228,6 +255,7 @@ function createRail(deps) {
     button.addEventListener('click', () => deps.select(skin.id))
     grid.append(button)
     buttons.set(skin.id, { button, chip })
+    }
   }
 
   const foot = document.createElement('div')
@@ -295,7 +323,7 @@ function createRail(deps) {
  * @param {{ skins: object[], getSkin: (id: string) => object, deriveSkin: (skin: object) => object, defaultSkin: string }} core
  */
 export function applyAtlas(ctx, core) {
-  const { skins, getSkin, deriveSkin, defaultSkin } = core
+  const { skins, getSkin, deriveSkin, defaultSkin, seriesOf } = core
 
   const stored = read(KEY_SKIN)
   let activeId = skins.some((skin) => skin.id === stored) ? stored : defaultSkin
@@ -344,10 +372,25 @@ export function applyAtlas(ctx, core) {
 
   const paint = () => {
     const skin = current()
+    const palette = skin[mode()]
     html.setAttribute('data-dsh-atlas', skin.id)
-    html.style.setProperty('--atlas-a', skin[mode()].accent)
-    html.style.setProperty('--atlas-b', skin[mode()].accent2)
+    html.style.setProperty('--atlas-a', palette.accent)
+    html.style.setProperty('--atlas-b', palette.accent2)
     html.setAttribute('data-dsh-atlas-mode', mode())
+    if (skin.wallpaper !== undefined) {
+      // The host route serves assets/wallpapers; alpha scrims keep text legible.
+      html.setAttribute('data-dsh-atlas-wallpaper', '')
+      html.style.setProperty('--atlas-wallpaper', `url('/dsh-theme-atlas/wallpapers/${skin.wallpaper.file}')`)
+      html.style.setProperty('--atlas-focus', skin.wallpaper.focus ?? 'center 50%')
+      html.style.setProperty('--atlas-scrim-1', alpha(palette.bg, mode() === 'dark' ? 0.74 : 0.86))
+      html.style.setProperty('--atlas-scrim-2', alpha(palette.bg, mode() === 'dark' ? 0.82 : 0.9))
+    } else {
+      html.removeAttribute('data-dsh-atlas-wallpaper')
+      html.style.removeProperty('--atlas-wallpaper')
+      html.style.removeProperty('--atlas-focus')
+      html.style.removeProperty('--atlas-scrim-1')
+      html.style.removeProperty('--atlas-scrim-2')
+    }
     applyTokens()
     rail?.refresh()
   }
@@ -379,6 +422,7 @@ export function applyAtlas(ctx, core) {
   ctx.effect(() => {
     rail = createRail({
       skins,
+      seriesOf,
       current,
       mode,
       select,
