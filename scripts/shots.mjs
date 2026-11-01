@@ -21,7 +21,6 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
 const OUT = join(ROOT, 'assets/screenshots')
 const PREVIEW = pathToFileURL(join(ROOT, 'preview')).href
 const SKINS = ['ink-jade', 'terracotta', 'aurora', 'abyss', 'sakura', 'paper']
-const LESHAN = ['sanjiang', 'lingyun', 'emei']
 
 const shots = [
   { file: '00-hero-2400x1350.png', page: 'hero.html', width: 2400, height: 1350, dsf: 1 },
@@ -46,35 +45,12 @@ const shots = [
     height: 1000,
     dsf: 2,
   },
-  { file: '00b-leshan-2400x1350.png', page: 'leshan.html', width: 2400, height: 1350, dsf: 1 },
-  ...LESHAN.map((skin, index) => ({
-    file: `${String(index + 9).padStart(2, '0')}-${skin}-light-1600x1000.png`,
-    page: `preview.html?skin=${skin}&mode=light`,
-    width: 1600,
-    height: 1000,
-    dsf: 2,
-  })),
-  {
-    file: '12-sanjiang-dark-1600x1000.png',
-    page: 'preview.html?skin=sanjiang&mode=dark',
-    width: 1600,
-    height: 1000,
-    dsf: 2,
-  },
 ]
 
 const keyArt = [
   ...SKINS.map((skin) => ({
     file: `assets/keyart/${skin}-1536x1024.png`,
     page: `keyart.html?skin=${skin}`,
-    width: 1536,
-    height: 1024,
-    dsf: 1,
-    dir: ROOT,
-  })),
-  ...LESHAN.map((skin) => ({
-    file: `assets/keyart/${skin}-1536x1024.png`,
-    page: `keyart-photo.html?skin=${skin}`,
     width: 1536,
     height: 1024,
     dsf: 1,

@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.3.0 — 2026-11-01
+
+- **Removed the Leshan photo skins and every image they needed.** The pack is now six material
+  skins painted with CSS only: no `assets/wallpapers`, no wallpaper key art or Leshan screenshots,
+  and no `wallpaper` field in `src/skins.mjs`. The photographs moved to the separate
+  [`dsh-theme-leshan`](https://github.com/John-20260101/dsh-theme-leshan) package.
+- **Removed the host route.** `index.js` no longer registers `/dsh-theme-atlas/wallpapers` and no
+  longer injects `webServer`; the bundle row is now inert, so a host without that service behaves
+  exactly like one with it. Dropped the frosted-plate derivation (`glass`) that only photo skins used.
+- **Unload now unpaints the page.** The previous build left `html[data-dsh-atlas]`,
+  `data-dsh-atlas-mode`, the inline `--atlas-a`/`--atlas-b` properties, the fallback stylesheet and
+  the token layer behind when the bundle was disabled. A cleanup effect disposes all of it and
+  removes the debug handle.
+- **Hardened the rail.** `innerHTML` is gone (skin names and the pack count are built as text
+  nodes), the count is derived from the pack instead of a hard-coded "6 skins", and Escape returns
+  focus to the pill.
+- **Robustness:** `apply` tolerates a document without a `<body>` yet (mount waits for
+  `DOMContentLoaded`), guards `ctx.get`/`ctx.theme` reads, falls back to the scoped sheet if a
+  theme service rejects the layer, and watches the appearance attribute on both `<html>` and
+  `<body>`.
+- Tests: the client smoke test now asserts six skins, switch disposal and full unload cleanup; the
+  host test asserts the row is inert and reads no service; `screenshots.json` lists the eight
+  material UI shots.
+
 ## 0.2.2 — 2026-10-31
 
 - Fixed the desktop shell hanging on the "Loading plugins…" boot screen. The browser half parked a

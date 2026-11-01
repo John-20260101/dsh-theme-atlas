@@ -3,12 +3,15 @@
  * Browser smoke test for the generated `client.js`.
  *
  * Loads the real bundle into a blank page with a stub cordis context, applies
- * it, and checks the three things the plugin promises: a full 119-token layer
- * through `ctx.theme.overrideTokens`, the `data-dsh-atlas` attribute, and a
- * rail that survives a skin switch. A second page repeats the apply against a
- * strict-injection context whose proxy throws on undeclared service reads, so
- * the no-theme-service fallback stays regression-tested. Skips (exit 0) when no
- * local Chrome is available, so CI without a browser stays green.
+ * it, and checks what the pack promises: a full 119-token layer through
+ * `ctx.theme.overrideTokens`, the `data-dsh-atlas` attribute, a rail with one
+ * entry per skin, a switch that disposes the previous layer, and an unload that
+ * leaves no attribute, custom property, style tag or rail behind.
+ *
+ * A second page repeats the apply against a strict-injection context whose
+ * proxy throws on undeclared service reads, so the no-theme-service fallback
+ * stays regression-tested. Skips (exit 0) when no local Chrome is available, so
+ * CI without a browser stays green.
  */
 import { chromium } from 'playwright'
 import { readFile } from 'node:fs/promises'
@@ -50,7 +53,7 @@ try {
         effects.push({ label, dispose })
         return () => {}
       },
-      inject(deps, callback) {
+      inject() {
         // The stub never resolves a late service; the direct property is enough.
       },
       theme: {
@@ -62,16 +65,20 @@ try {
     }
     const plugin = module.factory(() => null)
     plugin.apply(ctx)
+    const railButtons = document.querySelectorAll('#dsh-theme-atlas-rail')
     const first = {
       id: window.__MOD.id,
       attr: document.documentElement.getAttribute('data-dsh-atlas'),
+      mode: document.documentElement.getAttribute('data-dsh-atlas-mode'),
       source: window.__LAYER.source,
       tokens: Object.keys(window.__LAYER.layer).length,
       sample: window.__LAYER.layer['--dsw-alias-bg-base'],
-      rail: document.querySelector('#dsh-theme-atlas-rail') !== null,
-      shadow: document.querySelector('#dsh-theme-atlas-rail').shadowRoot !== null,
+      rail: railButtons.length === 1,
+      shadow: railButtons[0].shadowRoot !== null,
+      radios: railButtons[0].shadowRoot.querySelectorAll('[role="radio"]').length,
       effects: effects.map((item) => item.label),
       wash: document.documentElement.style.getPropertyValue('--atlas-a'),
+      handles: window.__DSH_ATLAS__.skins.length,
     }
     window.__DSH_ATLAS__.apply('paper')
     const second = {
@@ -79,34 +86,55 @@ try {
       disposed: window.__DISPOSED || 0,
       tokens: Object.keys(window.__LAYER.layer).length,
     }
+    window.__DSH_ATLAS__.apply('sanjiang')
+    const invalid = window.__DSH_ATLAS__.current()
     document.body.setAttribute('data-ds-dark-theme', '')
     const darkAccent = document.documentElement.style.getPropertyValue('--atlas-a')
-    const paperWallpaper = document.documentElement.hasAttribute('data-dsh-atlas-wallpaper')
-    window.__DSH_ATLAS__.apply('sanjiang')
-    const wallpaper = {
-      attr: document.documentElement.getAttribute('data-dsh-atlas-wallpaper'),
-      url: document.documentElement.style.getPropertyValue('--atlas-wallpaper'),
-      scrim: document.documentElement.style.getPropertyValue('--atlas-scrim-1'),
-      tokens: Object.keys(window.__LAYER.layer).length,
+    window.__DSH_ATLAS__.apply('ink-jade')
+    const back = {
+      attr: document.documentElement.getAttribute('data-dsh-atlas'),
+      wash: document.documentElement.style.getPropertyValue('--atlas-a'),
     }
-    return { first, second, darkAccent, lightAccent: first.wash, paperWallpaper, wallpaper }
+    // Unload in reverse registration order, the way the shell disposes a fiber.
+    for (const item of effects.slice().reverse()) {
+      if (typeof item.dispose === 'function') item.dispose()
+    }
+    const after = {
+      attr: document.documentElement.hasAttribute('data-dsh-atlas'),
+      mode: document.documentElement.hasAttribute('data-dsh-atlas-mode'),
+      washA: document.documentElement.style.getPropertyValue('--atlas-a'),
+      washB: document.documentElement.style.getPropertyValue('--atlas-b'),
+      signature: document.getElementById('dsh-theme-atlas/styles') !== null,
+      fallback: document.getElementById('dsh-theme-atlas/fallback') !== null,
+      rail: document.querySelector('#dsh-theme-atlas-rail') !== null,
+      handle: '__DSH_ATLAS__' in window,
+      disposed: window.__DISPOSED || 0,
+    }
+    return { first, second, invalid, darkAccent, lightAccent: first.wash, back, after }
   })
 
   if (result.first.id !== 'dsh-theme-atlas') fail(`module id ${result.first.id}`)
   if (result.first.attr !== 'ink-jade') fail(`initial skin ${result.first.attr}`)
+  if (result.first.mode !== 'light') fail(`initial mode ${result.first.mode}`)
   if (result.first.source !== 'dsh-theme-atlas') fail(`override source ${result.first.source}`)
   if (result.first.tokens !== 119) fail(`token count ${result.first.tokens}`)
   if (!result.first.sample || !result.first.sample.light) fail('token values are not {light,dark} pairs')
   if (!result.first.rail || !result.first.shadow) fail('rail missing or not in a shadow root')
+  if (result.first.radios !== 6) fail(`rail lists ${result.first.radios} skins, want 6`)
+  if (result.first.handles !== 6) fail(`debug handle exposes ${result.first.handles} skins`)
   if (result.second.attr !== 'paper') fail(`switch did not land on paper (${result.second.attr})`)
   if (result.second.disposed < 1) fail('previous token layer was not disposed on switch')
   if (result.second.tokens !== 119) fail('switched layer is incomplete')
+  if (result.invalid !== 'paper') fail(`unknown skin id changed the skin to ${result.invalid}`)
   if (result.lightAccent === result.darkAccent) fail('signature wash did not follow the appearance')
-  if (result.paperWallpaper) fail('a non-wallpaper skin set the wallpaper attribute')
-  if (result.wallpaper.attr === null) fail('wallpaper skin did not set the attribute')
-  if (!result.wallpaper.url.includes('leshan-sanjiang')) fail(`wallpaper url ${result.wallpaper.url}`)
-  if (!result.wallpaper.scrim.startsWith('rgba')) fail('wallpaper scrim is not translucent')
-  if (result.wallpaper.tokens !== 119) fail('wallpaper skin layer is incomplete')
+  if (result.back.attr !== 'ink-jade') fail(`switch back did not land (${result.back.attr})`)
+  if (result.after.attr || result.after.mode) fail('unload left data-dsh-atlas attributes behind')
+  if (result.after.washA || result.after.washB) fail('unload left --atlas-a/--atlas-b behind')
+  if (result.after.signature) fail('unload left the signature sheet behind')
+  if (result.after.fallback) fail('unload left the fallback sheet behind')
+  if (result.after.rail) fail('unload left the rail in the DOM')
+  if (result.after.handle) fail('unload left the debug handle on window')
+  if (result.after.disposed < 2) fail(`token layer disposed ${result.after.disposed} times, want >= 2`)
 
   // --- strict-injection shell ------------------------------------------------
   // The desktop shell's cordis proxy throws on any service read that is not
@@ -124,10 +152,12 @@ try {
   const strict = await guarded.evaluate(() => {
     const module = window.__MOD
     const injected = []
+    const effects = []
     const base = {
       effect(fn) {
         const dispose = fn()
-        return () => { if (typeof dispose === 'function') dispose() }
+        effects.push(dispose)
+        return () => {}
       },
       inject(deps) {
         // Parking a fiber here is what froze the desktop boot screen.
@@ -164,7 +194,7 @@ try {
       threw = String((error && error.message) || error)
     }
     const style = document.getElementById('dsh-theme-atlas/fallback')
-    return {
+    const state = {
       guardActive,
       threw,
       injected,
@@ -173,6 +203,15 @@ try {
       declarations: style === null ? 0 : (style.textContent.match(/--dsw-[a-z0-9-]+:/g) || []).length,
       rail: document.querySelector('#dsh-theme-atlas-rail') !== null,
     }
+    for (const dispose of effects.slice().reverse()) {
+      if (typeof dispose === 'function') dispose()
+    }
+    state.after = {
+      fallback: document.getElementById('dsh-theme-atlas/fallback') !== null,
+      attr: document.documentElement.hasAttribute('data-dsh-atlas'),
+      rail: document.querySelector('#dsh-theme-atlas-rail') !== null,
+    }
+    return state
   })
   await guarded.close()
 
@@ -185,10 +224,13 @@ try {
   if (!strict.fallback) fail('strict ctx did not fall back to the scoped stylesheet')
   if (strict.declarations !== 238) fail(`fallback sheet has ${strict.declarations} declarations, want 238`)
   if (!strict.rail) fail('strict ctx did not mount the rail')
+  if (strict.after.fallback) fail('strict ctx unload left the fallback sheet behind')
+  if (strict.after.attr) fail('strict ctx unload left data-dsh-atlas behind')
+  if (strict.after.rail) fail('strict ctx unload left the rail behind')
 
   if (process.exitCode !== 1) {
     console.log(
-      `client OK — 119 tokens, rail, switch, ${result.first.effects.length} effects, strict-injection fallback`,
+      `client OK — 119 tokens, 6 skins, switch, ${result.first.effects.length} effects, unload cleanup, strict-injection fallback`,
     )
   }
 } finally {

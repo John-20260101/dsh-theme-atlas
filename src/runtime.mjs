@@ -67,19 +67,6 @@ html[data-dsh-atlas="sakura"] body {
 html[data-dsh-atlas="paper"] body {
   background-image: none;
 }
-/* Wallpaper skins: the shell's own body carries the photograph, under a scrim
-   whose alpha comes from the active appearance, so panels can stay frosted. */
-html[data-dsh-atlas-wallpaper] body {
-  /* The skin owns the page painting while a photo skin is active: the shell's
-     own body background must not win by load order. */
-  background-image:
-    linear-gradient(180deg, var(--atlas-scrim-1) 0%, var(--atlas-scrim-2) 100%),
-    var(--atlas-wallpaper) !important;
-  background-size: cover, cover !important;
-  background-position: center center, var(--atlas-focus, center 50%) !important;
-  background-attachment: fixed, fixed !important;
-  background-repeat: no-repeat, no-repeat !important;
-}
 html[data-dsh-atlas] ::selection {
   background: var(--dsw-alias-bg-document-selection);
 }
@@ -145,11 +132,6 @@ function createRail(deps) {
     .head strong { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; opacity: .55; }
     .head span { font-size: 10.5px; opacity: .45; }
     .grid { display: grid; gap: 6px; }
-    .group {
-      padding: 8px 6px 3px; font-size: 9.5px; font-weight: 600;
-      letter-spacing: .14em; text-transform: uppercase; opacity: .45;
-    }
-    .group:first-child { padding-top: 2px; }
     .skin {
       display: flex; align-items: center; gap: 9px; padding: 7px 8px;
       border-radius: 10px; cursor: pointer; text-align: left;
@@ -211,7 +193,11 @@ function createRail(deps) {
 
   const head = document.createElement('div')
   head.className = 'head'
-  head.innerHTML = '<strong>Atlas</strong><span>6 skins</span>'
+  const title = document.createElement('strong')
+  title.textContent = 'Atlas'
+  const count = document.createElement('span')
+  count.textContent = `${deps.skins.length} skins`
+  head.append(title, count)
 
   const grid = document.createElement('div')
   grid.className = 'grid'
@@ -219,22 +205,12 @@ function createRail(deps) {
   grid.setAttribute('aria-label', '皮肤')
 
   const buttons = new Map()
-  const groups = [
-    ['material', '材质 · MATERIAL'],
-    ['leshan', '乐山 · LESHAN'],
-  ]
-  for (const [series, label] of groups) {
-    const items = deps.skins.filter((item) => deps.seriesOf(item) === series)
-    if (items.length === 0) continue
-    const heading = document.createElement('div')
-    heading.className = 'group'
-    heading.textContent = label
-    grid.append(heading)
-    for (const skin of items) {
+  for (const skin of deps.skins) {
     const button = document.createElement('button')
     button.type = 'button'
     button.className = 'skin'
     button.setAttribute('role', 'radio')
+    button.setAttribute('aria-checked', 'false')
     button.dataset.skin = skin.id
 
     const chip = document.createElement('span')
@@ -257,7 +233,6 @@ function createRail(deps) {
     button.addEventListener('click', () => deps.select(skin.id))
     grid.append(button)
     buttons.set(skin.id, { button, chip })
-    }
   }
 
   const foot = document.createElement('div')
@@ -277,6 +252,7 @@ function createRail(deps) {
   const open = (value) => {
     panel.hidden = !value
     pill.setAttribute('aria-expanded', String(value))
+    if (value) buttons.get(deps.current().id)?.button.focus()
   }
   pill.addEventListener('click', () => open(panel.hidden))
 
@@ -287,7 +263,10 @@ function createRail(deps) {
   document.addEventListener('pointerdown', onPointerDown, true)
 
   const onKeyDown = (event) => {
-    if (event.key === 'Escape' && !panel.hidden) open(false)
+    if (event.key === 'Escape' && !panel.hidden) {
+      open(false)
+      pill.focus()
+    }
     if (event.altKey && (event.key === 'k' || event.key === 'K')) {
       event.preventDefault()
       deps.cycle()
@@ -297,7 +276,10 @@ function createRail(deps) {
 
   const refresh = () => {
     const skin = deps.current()
-    label.innerHTML = `<b>${skin.name.zh}</b> · ${skin.name.en}`
+    label.textContent = ''
+    const zhName = document.createElement('b')
+    zhName.textContent = skin.name.zh
+    label.append(zhName, ` · ${skin.name.en}`)
     dot.style.background = `linear-gradient(140deg, ${skin[deps.mode()].accent}, ${skin[deps.mode()].accent2})`
     for (const [id, { button, chip }] of buttons) {
       button.setAttribute('aria-checked', String(id === skin.id))
@@ -325,7 +307,7 @@ function createRail(deps) {
  * @param {{ skins: object[], getSkin: (id: string) => object, deriveSkin: (skin: object) => object, defaultSkin: string }} core
  */
 export function applyAtlas(ctx, core) {
-  const { skins, getSkin, deriveSkin, defaultSkin, seriesOf } = core
+  const { skins, getSkin, deriveSkin, defaultSkin } = core
 
   const stored = read(KEY_SKIN)
   let activeId = skins.some((skin) => skin.id === stored) ? stored : defaultSkin
@@ -334,9 +316,24 @@ export function applyAtlas(ctx, core) {
   const doc = document
   const html = doc.documentElement
   const current = () => getSkin(activeId)
-  const isDark = () =>
-    doc.body !== null && doc.body.hasAttribute('data-ds-dark-theme')
+  const isDark = () => doc.body !== null && doc.body.hasAttribute('data-ds-dark-theme')
   const mode = () => (isDark() ? 'dark' : 'light')
+
+  /**
+   * Run `fn` once the shell has a <body>. A browser half can be applied while
+   * the document is still head-only; touching `doc.body` there throws and takes
+   * the bundle down, so mounting waits for DOMContentLoaded instead. Returns a
+   * cancel function (a no-op when the body was already there).
+   */
+  const whenBody = (fn) => {
+    if (doc.body !== null) {
+      fn()
+      return () => {}
+    }
+    const onReady = () => fn()
+    doc.addEventListener('DOMContentLoaded', onReady, { once: true })
+    return () => doc.removeEventListener('DOMContentLoaded', onReady)
+  }
 
   /** Token layer handed to the shell: every value is a { light, dark } pair. */
   const tokenLayer = () => {
@@ -356,8 +353,8 @@ export function applyAtlas(ctx, core) {
   // direct read there.
   const discoverTheme = () => {
     if (!ctx) return undefined
-    if (typeof ctx.get === 'function') return ctx.get('theme')
     try {
+      if (typeof ctx.get === 'function') return ctx.get('theme')
       return ctx.theme
     } catch (error) {
       return undefined
@@ -365,20 +362,23 @@ export function applyAtlas(ctx, core) {
   }
   const seeded = discoverTheme()
   let themeSvc = seeded && typeof seeded.overrideTokens === 'function' ? seeded : null
-  const themeService = () => themeSvc
 
   const applyTokens = () => {
     disposeTokens()
     disposeTokens = () => {}
-    const skin = current()
-    const service = themeService()
-    if (service !== null) {
-      disposeTokens = service.overrideTokens(SOURCE, tokenLayer()) ?? (() => {})
-      doc.getElementById('dsh-theme-atlas/fallback')?.remove()
-      return
+    if (themeSvc !== null) {
+      try {
+        disposeTokens = themeSvc.overrideTokens(SOURCE, tokenLayer()) ?? (() => {})
+        doc.getElementById('dsh-theme-atlas/fallback')?.remove()
+        return
+      } catch (error) {
+        // A service that refuses the layer is no better than no service: fall
+        // through to the scoped sheet rather than leave the shell unpainted.
+        themeSvc = null
+      }
     }
     // No theme service: write the same tokens into a scoped sheet instead.
-    const both = deriveSkin(skin)
+    const both = deriveSkin(current())
     let tag = doc.getElementById('dsh-theme-atlas/fallback')
     if (tag === null) {
       tag = doc.createElement('style')
@@ -401,25 +401,12 @@ export function applyAtlas(ctx, core) {
     html.style.setProperty('--atlas-a', palette.accent)
     html.style.setProperty('--atlas-b', palette.accent2)
     html.setAttribute('data-dsh-atlas-mode', mode())
-    if (skin.wallpaper !== undefined) {
-      // The host route serves assets/wallpapers; alpha scrims keep text legible.
-      html.setAttribute('data-dsh-atlas-wallpaper', '')
-      html.style.setProperty('--atlas-wallpaper', `url('/dsh-theme-atlas/wallpapers/${skin.wallpaper.file}')`)
-      html.style.setProperty('--atlas-focus', skin.wallpaper.focus ?? 'center 50%')
-      html.style.setProperty('--atlas-scrim-1', alpha(palette.bg, mode() === 'dark' ? 0.74 : 0.86))
-      html.style.setProperty('--atlas-scrim-2', alpha(palette.bg, mode() === 'dark' ? 0.82 : 0.9))
-    } else {
-      html.removeAttribute('data-dsh-atlas-wallpaper')
-      html.style.removeProperty('--atlas-wallpaper')
-      html.style.removeProperty('--atlas-focus')
-      html.style.removeProperty('--atlas-scrim-1')
-      html.style.removeProperty('--atlas-scrim-2')
-    }
     applyTokens()
     rail?.refresh()
   }
 
   let rail = null
+  let debugHandle = null
 
   const select = (id) => {
     if (!skins.some((skin) => skin.id === id)) return
@@ -444,34 +431,70 @@ export function applyAtlas(ctx, core) {
 
   // Rail, mounted once the shell has a body; removed with the fiber.
   ctx.effect(() => {
-    rail = createRail({
-      skins,
-      seriesOf,
-      current,
-      mode,
-      select,
-      cycle,
-      hideRail: () => {
-        railHidden = true
-        write(KEY_RAIL, 'hidden')
-        rail.host.hidden = true
-      },
+    let teardown = () => {}
+    const cancel = whenBody(() => {
+      const mounted = createRail({
+        skins,
+        current,
+        mode,
+        select,
+        cycle,
+        hideRail: () => {
+          railHidden = true
+          write(KEY_RAIL, 'hidden')
+          if (rail !== null) rail.host.hidden = true
+        },
+      })
+      rail = mounted
+      mounted.host.hidden = railHidden
+      doc.body.append(mounted.host)
+      teardown = () => {
+        mounted.dispose()
+        if (rail === mounted) rail = null
+      }
     })
-    rail.host.hidden = railHidden
-    doc.body.append(rail.host)
     return () => {
-      rail.dispose()
-      rail = null
+      cancel()
+      teardown()
     }
   }, 'atlas: skin rail')
 
   // Scheme flips change which accent feeds the wash, not which skin is active.
-  const onScheme = () => paint()
+  // Both the page and the body are watched: different shells put the appearance
+  // attribute on either element.
   ctx.effect(() => {
-    const observer = new MutationObserver(onScheme)
-    observer.observe(doc.body, { attributes: true, attributeFilter: ['data-ds-dark-theme'] })
-    return () => observer.disconnect()
+    const observer = new MutationObserver(() => paint())
+    const attach = () => {
+      const options = { attributes: true, attributeFilter: ['data-ds-dark-theme'] }
+      observer.observe(doc.documentElement, options)
+      observer.observe(doc.body, options)
+    }
+    const cancel = whenBody(attach)
+    return () => {
+      cancel()
+      observer.disconnect()
+    }
   }, 'atlas: appearance observer')
+
+  // Unloading must unpaint the page: the attributes, the inline custom
+  // properties, the fallback sheet and the token layer all belong to us, and a
+  // leftover `html[data-dsh-atlas]` would keep a dead skin's rules matching.
+  ctx.effect(() => () => {
+    disposeTokens()
+    disposeTokens = () => {}
+    doc.getElementById('dsh-theme-atlas/fallback')?.remove()
+    html.removeAttribute('data-dsh-atlas')
+    html.removeAttribute('data-dsh-atlas-mode')
+    html.style.removeProperty('--atlas-a')
+    html.style.removeProperty('--atlas-b')
+    if (debugHandle !== null && window.__DSH_ATLAS__ === debugHandle) {
+      try {
+        delete window.__DSH_ATLAS__
+      } catch (error) {
+        window.__DSH_ATLAS__ = undefined
+      }
+    }
+  }, 'atlas: page cleanup')
 
   // The theme service may arrive after apply on shells that provide it late.
   // Never park a fiber for it: `ctx.inject(['theme'])` stays pending forever on
@@ -483,12 +506,14 @@ export function applyAtlas(ctx, core) {
 
   // Debug/automation handle: the preview renderer and the smoke test use it.
   try {
-    window.__DSH_ATLAS__ = {
+    debugHandle = {
       skins: skins.map((skin) => ({ id: skin.id, name: skin.name })),
       apply: select,
       current: () => activeId,
     }
+    window.__DSH_ATLAS__ = debugHandle
   } catch (error) {
+    debugHandle = null
     /* no window: nothing to expose */
   }
 }

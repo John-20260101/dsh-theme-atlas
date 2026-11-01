@@ -7,7 +7,6 @@ then this script writes the shipped files:
   assets/screenshots/*.png  -> .jpg, quality 86, 4:4:4 chroma  (text stays crisp)
   assets/keyart/*.png       -> .jpg, quality 84, 4:2:0
   assets/icon-*.png         -> palette-quantised PNG (flat art, no visible loss)
-  assets/wallpapers/*.jpg   -> re-encoded from the author's originals at q80
 
 Run with --dry-run to print the table without touching files, --keep to keep the
 PNG renders next to the JPEGs.
@@ -25,14 +24,6 @@ ROOT = Path(__file__).resolve().parent.parent
 SHOTS = ROOT / "assets" / "screenshots"
 KEYART = ROOT / "assets" / "keyart"
 ICONS = [ROOT / "assets" / "icon-1024.png", ROOT / "assets" / "icon-512.png", ROOT / "assets" / "icon-180.png"]
-WALLPAPERS = {
-    # name -> original supplied PNG (native resolution, never upscaled)
-    "leshan-sanjiang-1448x1086.jpg": ".dsh-vision-router/artifacts/.runs/.vision-run-handoff/materialized/a80df2b625c1ea76b32b66729a8c0d0f3d520f8fbad67bc4114d4d17913aa8d0.png",
-    "leshan-lingyun-1536x1024.jpg": ".dsh-vision-router/artifacts/.runs/.vision-run-handoff/materialized/929030b9dd2f27412097.png",
-    "leshan-emei-1536x1024.jpg": ".dsh-vision-router/artifacts/.runs/.vision-run-handoff/materialized/d429e1c16132266878e5.png",
-}
-
-
 def kb(path: Path) -> float:
     return path.stat().st_size / 1024
 
@@ -96,20 +87,6 @@ def main() -> None:
                 quantised = image.convert("RGBA").quantize(colors=256, method=Image.Quantize.FASTOCTREE)
                 quantised.save(icon, optimize=True)
         rows.append((f"icons/{icon.name}", before, kb(icon)))
-
-    # 4. wallpapers: from the author's originals when available
-    for name, original in WALLPAPERS.items():
-        destination = ROOT / "assets" / "wallpapers" / name
-        before = kb(destination) if destination.exists() else 0.0
-        source = ROOT.parent / original
-        if not args.dry_run:
-            with Image.open(source) as image:
-                if image.width > 1600:
-                    image = image.resize((1600, round(image.height * 1600 / image.width)), Image.LANCZOS)
-                size = save_jpeg(image, destination, 80, 2)
-        else:
-            size = before * 1024
-        rows.append((f"wallpapers/{name}", before, size / 1024))
 
     total_before = sum(row[1] for row in rows)
     total_after = sum(row[2] for row in rows)

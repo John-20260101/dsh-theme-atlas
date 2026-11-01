@@ -1,80 +1,38 @@
 #!/usr/bin/env node
 /**
- * Host route test: the wallpaper endpoint is whitelisted, cached and
- * HEAD-correct. Uses the real handler with a synthetic request/response pair.
+ * Host-half contract test: the bundle row still mounts, exports a stable name,
+ * and asks the host for nothing it does not use.
+ *
+ * The pack is browser-side, so a host without `webServer` must be a supported
+ * shape rather than a degraded one. The previous host half injected
+ * `webServer` to serve wallpapers; this test fails if that dependency (or any
+ * other service read) comes back.
  */
-import { Writable } from 'node:stream'
-import { stat } from 'node:fs/promises'
-import { dirname, join } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { apply } from '../index.js'
-
-const ROOT = dirname(dirname(fileURLToPath(import.meta.url)))
-const FILE = 'leshan-lingyun-1536x1024.jpg'
+import { apply, name } from '../index.js'
 
 const problems = []
 const check = (ok, message) => { if (!ok) problems.push(message) }
 
-let route = null
-apply({
-  effect: (fn) => { fn(); return () => {} },
-  webServer: { register: (config) => { route = config; return () => {} } },
-})
-check(route !== null, 'route was not registered')
-check(route?.kind === 'prefix', 'route must be a prefix route')
-check(route?.path === '/dsh-theme-atlas/wallpapers', `unexpected path ${route?.path}`)
+check(name === 'themeAtlas', `name is ${name}, want themeAtlas`)
+check(typeof apply === 'function', 'apply is not a function')
 
-const makeRes = () => {
-  const chunks = []
-  const res = new Writable({ write(chunk, encoding, callback) { chunks.push(chunk); callback() } })
-  res.headers = {}
-  res.statusCode = 200
-  res.writeHead = (code, headers) => {
-    res.statusCode = code
-    for (const [key, value] of Object.entries(headers ?? {})) res.headers[key.toLowerCase()] = value
-  }
-  res.setHeader = (key, value) => { res.headers[key.toLowerCase()] = value }
-  res.body = () => Buffer.concat(chunks)
-  return res
-}
-
-const call = (method, url, headers = {}) => new Promise((resolve) => {
-  const req = { method, url, headers }
-  const res = makeRes()
-  res.on('finish', () => resolve(res))
-  route.handler(req, res)
+// Any service read throws: an inert row must not touch `ctx` at all.
+const ctx = new Proxy({}, {
+  get(target, prop) {
+    throw new Error(`host half read ctx.${String(prop)}`)
+  },
 })
 
-const info = await stat(join(ROOT, 'assets/wallpapers', FILE))
-
-const get = await call('GET', `/dsh-theme-atlas/wallpapers/${FILE}`)
-check(get.statusCode === 200, `GET status ${get.statusCode}`)
-check(get.headers['content-type'] === 'image/jpeg', 'GET content-type')
-check(Number(get.headers['content-length']) === info.size, 'GET content-length')
-check(get.body().length === info.size, 'GET body size')
-
-const head = await call('HEAD', `/dsh-theme-atlas/wallpapers/${FILE}`)
-check(head.statusCode === 200, `HEAD status ${head.statusCode}`)
-check(head.body().length === 0, 'HEAD must not send a body')
-
-const revalidated = await call('GET', `/dsh-theme-atlas/wallpapers/${FILE}`, { 'if-none-match': get.headers.etag })
-check(revalidated.statusCode === 304, `304 expected, got ${revalidated.statusCode}`)
-
-for (const attempt of [
-  ['GET', '/dsh-theme-atlas/wallpapers/../../package.json'],
-  ['GET', '/dsh-theme-atlas/wallpapers/%2e%2e%2fpackage.json'],
-  ['GET', '/dsh-theme-atlas/wallpapers/index.js'],
-  ['GET', '/dsh-theme-atlas/wallpapers/'],
-]) {
-  const res = await call(attempt[0], attempt[1])
-  check(res.statusCode === 404, `${attempt[1]} should 404, got ${res.statusCode}`)
+let threw = null
+try {
+  apply(ctx)
+} catch (error) {
+  threw = String((error && error.message) || error)
 }
-
-const post = await call('POST', `/dsh-theme-atlas/wallpapers/${FILE}`)
-check(post.statusCode === 405, `POST should 405, got ${post.statusCode}`)
+check(threw === null, `apply threw on a bare context: ${threw}`)
 
 if (problems.length > 0) {
   console.error(problems.map((line) => `FAIL ${line}`).join('\n'))
   process.exit(1)
 }
-console.log('host OK — 200/304/HEAD/404 traversal/405 method, size matches file')
+console.log('host OK — inert row: no webServer, no route, no state')
