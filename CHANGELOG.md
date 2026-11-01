@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.2 — 2026-10-31
+
+- Fixed the desktop shell hanging on the "Loading plugins…" boot screen. The browser half parked a
+  `ctx.inject(['theme'])` fiber for a service the desktop shell never provides; that pending fiber kept
+  the shell's own `uiRenderer` mount from settling, so the app never left the boot page. Late arrival is
+  now handled by re-reading the service on every repaint instead of parking a fiber.
+- Added a strict-injection browser case: the client test now applies the bundle against a
+  proxy that throws on undeclared service reads and asserts the scoped stylesheet fallback
+  plus the rail still land, and that no injection is parked for `theme`.
+- Fixed the desktop shell failing to boot with `web boot: 1 entry did not activate` /
+  `dsh-theme-atlas: failed`. The browser half read `ctx.theme` directly while declaring
+  `inject: []`; cordis 4 throws `cannot get property "theme" without inject` on that read,
+  before the `typeof` fallback guard could run. The service is now discovered through
+  `ctx.get('theme')`, which stays silent when no provider exists.
+
 ## 0.2.1 — 2026-10-30
 
 - Compressed the shipped image set from ~21 MB to ~3.8 MB: UI screenshots and key art are JPEG (q86 4:4:4 / q84), wallpapers re-encoded at q78, icons palette-quantised PNG.

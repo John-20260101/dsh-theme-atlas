@@ -5,8 +5,10 @@
  * Loads the real bundle into a blank page with a stub cordis context, applies
  * it, and checks the three things the plugin promises: a full 119-token layer
  * through `ctx.theme.overrideTokens`, the `data-dsh-atlas` attribute, and a
- * rail that survives a skin switch. Skips (exit 0) when no local Chrome is
- * available, so CI without a browser stays green.
+ * rail that survives a skin switch. A second page repeats the apply against a
+ * strict-injection context whose proxy throws on undeclared service reads, so
+ * the no-theme-service fallback stays regression-tested. Skips (exit 0) when no
+ * local Chrome is available, so CI without a browser stays green.
  */
 import { chromium } from 'playwright'
 import { readFile } from 'node:fs/promises'
@@ -106,8 +108,88 @@ try {
   if (!result.wallpaper.scrim.startsWith('rgba')) fail('wallpaper scrim is not translucent')
   if (result.wallpaper.tokens !== 119) fail('wallpaper skin layer is incomplete')
 
+  // --- strict-injection shell ------------------------------------------------
+  // The desktop shell's cordis proxy throws on any service read that is not
+  // declared in `inject`, before the caller's own `typeof` guard can run. The
+  // plugin declares `inject: []`, so it must never touch `ctx.theme` directly;
+  // it has to discover the service through `ctx.get` and fall back when absent.
+  const guarded = await browser.newPage()
+  await guarded.setContent('<!doctype html><html><head></head><body><div id="app">shell</div></body></html>')
+  await guarded.evaluate(() => {
+    window.__MOD = null
+    window.__ModuleLoader__ = { load: (mod) => { window.__MOD = mod } }
+  })
+  await guarded.addScriptTag({ content: await readFile(join(ROOT, 'client.js'), 'utf8') })
+  await guarded.waitForFunction(() => window.__MOD !== null)
+  const strict = await guarded.evaluate(() => {
+    const module = window.__MOD
+    const injected = []
+    const base = {
+      effect(fn) {
+        const dispose = fn()
+        return () => { if (typeof dispose === 'function') dispose() }
+      },
+      inject(deps) {
+        // Parking a fiber here is what froze the desktop boot screen.
+        injected.push(...(Array.isArray(deps) ? deps : Object.keys(deps)))
+      },
+      // cordis exposes `on` on every context; the plugin subscribes instead of injecting.
+      on() {
+        return () => {}
+      },
+      // No theme service on this shell.
+      get() {
+        return undefined
+      },
+    }
+    const ctx = new Proxy(base, {
+      get(target, prop, receiver) {
+        if (typeof prop === 'string' && !(prop in target)) {
+          throw new Error(`cannot get property "${prop}" without inject`)
+        }
+        return Reflect.get(target, prop, receiver)
+      },
+    })
+    let guardActive = false
+    try {
+      void ctx.theme
+    } catch (error) {
+      guardActive = /without inject/.test(error.message)
+    }
+    const plugin = module.factory(() => null)
+    let threw = null
+    try {
+      plugin.apply(ctx)
+    } catch (error) {
+      threw = String((error && error.message) || error)
+    }
+    const style = document.getElementById('dsh-theme-atlas/fallback')
+    return {
+      guardActive,
+      threw,
+      injected,
+      attr: document.documentElement.getAttribute('data-dsh-atlas'),
+      fallback: style !== null,
+      declarations: style === null ? 0 : (style.textContent.match(/--dsw-[a-z0-9-]+:/g) || []).length,
+      rail: document.querySelector('#dsh-theme-atlas-rail') !== null,
+    }
+  })
+  await guarded.close()
+
+  if (!strict.guardActive) fail('strict-injection guard did not engage — the case proves nothing')
+  if (strict.threw !== null) fail(`apply threw on a strict-injection ctx: ${strict.threw}`)
+  if (strict.injected.includes('theme')) {
+    fail('plugin parked an injection for an unavailable theme service (freezes the shell boot)')
+  }
+  if (strict.attr !== 'ink-jade') fail(`strict ctx did not paint (${strict.attr})`)
+  if (!strict.fallback) fail('strict ctx did not fall back to the scoped stylesheet')
+  if (strict.declarations !== 238) fail(`fallback sheet has ${strict.declarations} declarations, want 238`)
+  if (!strict.rail) fail('strict ctx did not mount the rail')
+
   if (process.exitCode !== 1) {
-    console.log(`client OK — 119 tokens, rail, switch, ${result.first.effects.length} effects`)
+    console.log(
+      `client OK — 119 tokens, rail, switch, ${result.first.effects.length} effects, strict-injection fallback`,
+    )
   }
 } finally {
   await browser.close()

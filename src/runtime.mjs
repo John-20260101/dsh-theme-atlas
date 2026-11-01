@@ -348,7 +348,23 @@ export function applyAtlas(ctx, core) {
   }
 
   let disposeTokens = () => {}
-  let themeSvc = ctx && ctx.theme && typeof ctx.theme.overrideTokens === 'function' ? ctx.theme : null
+  // `ctx.get` reads a service without declaring it in `inject`. Reading
+  // `ctx.theme` directly throws on shells whose cordis enforces strict
+  // injection ("cannot get property \"theme\" without inject"), even inside a
+  // `typeof` guard, and takes the whole plugin down with it. Plain stub
+  // contexts (the preview renderer) have no `get`, so fall back to a guarded
+  // direct read there.
+  const discoverTheme = () => {
+    if (!ctx) return undefined
+    if (typeof ctx.get === 'function') return ctx.get('theme')
+    try {
+      return ctx.theme
+    } catch (error) {
+      return undefined
+    }
+  }
+  const seeded = discoverTheme()
+  let themeSvc = seeded && typeof seeded.overrideTokens === 'function' ? seeded : null
   const themeService = () => themeSvc
 
   const applyTokens = () => {
@@ -374,6 +390,12 @@ export function applyAtlas(ctx, core) {
 
   const paint = () => {
     const skin = current()
+    // Cheap safety net for shells that register the service without an event we
+    // can observe: upgrade on the next repaint rather than parking a fiber.
+    if (themeSvc === null) {
+      const late = discoverTheme()
+      if (late && typeof late.overrideTokens === 'function') themeSvc = late
+    }
     const palette = skin[mode()]
     html.setAttribute('data-dsh-atlas', skin.id)
     html.style.setProperty('--atlas-a', palette.accent)
@@ -451,16 +473,11 @@ export function applyAtlas(ctx, core) {
     return () => observer.disconnect()
   }, 'atlas: appearance observer')
 
-  // The theme service may arrive after apply on shells that inject it late:
-  // re-paint once it does, so the first frame still lands on the right palette.
-  if (typeof ctx.inject === 'function') {
-    ctx.inject(['theme'], (tctx) => {
-      if (tctx && tctx.theme) {
-        themeSvc = tctx.theme
-        paint()
-      }
-    })
-  }
+  // The theme service may arrive after apply on shells that provide it late.
+  // Never park a fiber for it: `ctx.inject(['theme'])` stays pending forever on
+  // shells that never provide the service, and the shell's own `uiRenderer`
+  // injection then never settles — the boot screen freezes on "Loading plugins…".
+  // `paint()` re-reads the service on every repaint instead.
 
   paint()
 
